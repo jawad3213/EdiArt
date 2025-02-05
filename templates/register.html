@@ -1,0 +1,41 @@
+{% extends 'useful.html' %}
+{% block title %}
+Register Page
+{% endblock %}
+
+{% block content %}
+<body class="text-center">
+    <div class="container">
+        <form method="POST" class="form-register" style="color:rgb(0, 0, 0)">
+            <img class="mb-4" src="https://upload.wikimedia.org/wikipedia/commons/8/86/Logo_EdiyArt_Propiedad_de_Arturo_y_Edith.png" alt="Description">
+
+
+            <h1 class="h3 mb-3 font-weight-normal">
+                Please Create your Account
+            </h1>
+            <br>
+            {{ form.username.label() }}
+            {{ form.username(class="form-control", placeholder="UserName") }}
+            
+            {{ form.email_address.label() }}
+            {{ form.email_address(class="form-control", placeholder="Email Address") }}
+
+            {{ form.password1.label() }}
+            {{ form.password1(class="form-control", placeholder="Password") }}
+
+            {{ form.password2.label() }}
+            {{ form.password2(class="form-control", placeholder="Confirm Password") }}
+            <br>
+
+            {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+
+
+            
+
+
+        
+
+        </form>
+    </div>
+</body>
+{% endblock %}

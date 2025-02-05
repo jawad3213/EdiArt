@@ -1,0 +1,63 @@
+{% extends 'useful.html' %}
+
+{% block title %}
+  Image Editor Page
+{% endblock %}
+
+{% block content %}
+  
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Manipulation</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center;}
+        input, select, button { margin: 10px; padding: 10px; }
+        .image-container { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
+        img { max-width: 45%; height: auto; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .download-button { margin-top: 20px; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        .download-button:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+    <h1>Image Manipulation</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" required><br>
+        <label for="effect">Choose an effect:</label>
+        <select name="effect" id="effect">
+            <option value="grayscale">Grayscale</option>
+            <option value="sepia">Sepia</option>
+            <option value="invert">Invert Colors</option>
+            <option value="blur">Blur</option>
+            <option value="pixelate">Pixelate</option>
+        </select><br>
+        <button type="submit">Apply Effect</button>
+    </form>
+
+    {% if original_image and processed_image %}
+        <div class="image-container">
+            <div>
+                <h2>Original Image</h2>
+                <img src="{{ original_image }}" alt="Original Image">
+            </div>
+            <div>
+                <h2>Processed Image</h2>
+                <img src="{{ processed_image }}" alt="Processed Image">
+                <br>
+                <a href="{{ download_link }}">
+                    <button class="download-button">Download Processed Image</button>
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</body>
+</html>
+
+
+
+
+
+{% endblock %}
