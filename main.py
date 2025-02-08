@@ -170,6 +170,10 @@ def Artpage():
 def Audiopage():
     return render_template('Audio.html')
 
+@app.route('/Log In')
+def Loginpage():
+    return render_template('LogIn.html')
+
 @app.route('/register')
 def registerpage():
     form = RegisterForm()
