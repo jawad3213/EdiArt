@@ -19,10 +19,12 @@ matplotlib.use('Agg')
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'jawad'
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
+app.config['AUDIO_FOLDER'] = os.path.join('static', 'audio')
 # Ensure the upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
-
+if not os.path.exists(app.config['AUDIO_FOLDER']):
+    os.makedirs(app.config['AUDIO_FOLDER'])
 
 
 
@@ -82,77 +84,7 @@ def generate_shapes_route():
     shapes = generate_random_shapes()
     return jsonify(shapes)
 
-
-
-
-
-
-
 # Helper function to generate random shapes
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # Routes
@@ -166,9 +98,6 @@ def Artpage():
     return render_template('Art.html')
 
 
-@app.route('/Audio')
-def Audiopage():
-    return render_template('Audio.html')
 
 @app.route('/Log In')
 def Loginpage():
@@ -245,6 +174,130 @@ def Datapage1():
     plot_data = base64.b64encode(buf.getvalue()).decode('utf-8')
 
     return render_template("Data1.html", plot_data=plot_data)
+# audiooooooooooooooooooooooooo
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+import os
+from pydub import AudioSegment
+import os
+from flask import Flask, request, render_template, url_for, redirect
+from werkzeug.utils import secure_filename
+from pydub import AudioSegment
+
+from pydub import AudioSegment
+from pydub.utils import which
+UPLOAD_FOLDER = 'static/uploads'
+MODIFIED_FOLDER = 'static/modified'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MODIFIED_FOLDER'] = MODIFIED_FOLDER
+
+# Extensions de fichiers audio autorisés
+ALLOWED_EXTENSIONS = {'mp3', 'wav', 'ogg', 'flac'}
+
+# Fonction pour vérifier l'extension
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        try:
+            # Si un fichier est téléchargé
+            if 'audio_file' in request.files:
+                file = request.files['audio_file']
+                if file.filename == '':
+                    return 'No selected file', 400
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(filepath)
+
+                    # Charger l'audio original
+                    audio = AudioSegment.from_file(filepath)
+
+                    # Sauvegarder l'audio original
+                    original_filepath = os.path.join(app.config['MODIFIED_FOLDER'], f"original_{filename}")
+                    audio.export(original_filepath, format="mp3")
+
+                    # Renvoyer la page avec l'audio original
+                    return render_template('Audio.html', audio_url_original=f'uploads/{filename}', audio_url_modified=None)
+
+            # Si le bouton "Apply Modification" est cliqué
+            if 'apply_modification' in request.form:
+                filename = request.form['filename']  # Récupérer le filename du formulaire
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+                # Vérifier si le fichier existe
+                if not os.path.exists(filepath):
+                    return 'File not found', 404
+
+                # Charger l'audio
+                audio = AudioSegment.from_file(filepath)
+
+                # Appliquer des modifications
+                speed = float(request.form.get('speed', 1.0))
+                volume = float(request.form.get('volume', 0))  # Volume en dB
+                effects = request.form.get('effects', 'none')
+                layer_audio = request.files.get('layer_audio')  # Pour ajouter un fichier audio supplémentaire à superposer
+
+                # Appliquer les effets
+                if speed != 1.0:
+                    audio = audio.speedup(playback_speed=speed)
+
+                if volume != 0:
+                    audio = audio + volume  # Modifier le volume en dB
+
+                if effects == 'echo':
+                    audio = audio.reverse()  # Exemple d'effet (echo simple)
+
+                # Superposition de sons
+                if layer_audio:
+                    layer_filename = secure_filename(layer_audio.filename)
+                    layer_filepath = os.path.join(app.config['UPLOAD_FOLDER'], layer_filename)
+                    layer_audio.save(layer_filepath)
+
+                    # Charger le clip à superposer
+                    overlay_audio = AudioSegment.from_file(layer_filepath)
+
+                    # Superposer les sons
+                    audio = audio.overlay(overlay_audio)
+
+                # Sauvegarder l'audio modifié
+                modified_filename = f"modified_{filename}"
+                modified_filepath = os.path.join(app.config['MODIFIED_FOLDER'], modified_filename)
+
+                # Vérifier si le dossier existe, sinon le créer
+                if not os.path.exists(app.config['MODIFIED_FOLDER']):
+                    os.makedirs(app.config['MODIFIED_FOLDER'])
+
+                audio.export(modified_filepath, format="mp3")
+
+                # Afficher l'audio modifié
+                return render_template('Audio.html', audio_url_original=f'uploads/{filename}', audio_url_modified=f'modified/{modified_filename}')
+
+        except Exception as e:
+            print(f"Error: {str(e)}")
+            return f"An error occurred: {str(e)}", 500
+
+    return render_template('Audio.html')
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/modified/<filename>')
+def modified_file(filename):
+    return send_from_directory(app.config['MODIFIED_FOLDER'], filename)
+
+
+
+
+
+
+
+@app.route('/Audio')
+def Audiopage():
+    return render_template('Audio.html')
+
 
 
 @app.route('/Image')
@@ -294,4 +347,6 @@ def download_file(filename):
     return send_file(file_path, as_attachment=True)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+     
+   
+      app.run(debug=True)
