@@ -4,397 +4,480 @@
 {% endblock %}
 {% block content %}
 
-<h1 class="text-center mt-4">Generative Art Pieces</h1>
-<div class="text-center">
-  <button id="addCanvas" class="btn btn-primary mt-4 p-4">➕ Add New</button>
-  <button id="saveCanvas" class="btn btn-success mt-4 p-4 mx-3">💾 Save</button>
-  <button id="addShape" class="btn btn-info mt-4 p-4 mx-3">🎨 Add Shape</button>
-  <button id="modifyShape" class="btn btn-warning p-4 mt-4">✏ Modify Shape</button>
-</div>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .col {
+            margin-bottom: 40px;
+            text-align: center;
+        }
 
-<!-- Modal for Adding Shape -->
-<div class="modal fade" id="addShapeModal" tabindex="-1" aria-labelledby="addShapeModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addShapeModalLabel">Add New Shape</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3">
-          <label for="shapeType" class="form-label">Shape Type</label>
-          <select class="form-select" id="shapeType">
-            <option value="circle">Circle</option>
-            <option value="square">Square</option>
-            <option value="triangle">Triangle</option>
-              <option value="mandelbrot">Mandelbrot</option>
-            <option value="julia">Julia</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="shapeSize" class="form-label">Size</label>
-          <input type="number" class="form-control" id="shapeSize" value="30">
-        </div>
-          <div class="mb-3">
-              <label for="shapeColor" class="form-label">Color</label>
-               <input type="color" class="form-control form-control-color" id="shapeColor" value="#000000">
-          </div>
-          <div class="mb-3">
-              <label for="shapePositionX" class="form-label">X Position</label>
-              <input type="number" class="form-control" id="shapePositionX" value="0">
-          </div>
-            <div class="mb-3">
-              <label for="shapePositionY" class="form-label">Y Position</label>
-              <input type="number" class="form-control" id="shapePositionY" value="0">
-          </div>
-           <!-- Fractal specific options  -->
-          <div class="mb-3 fractal-options" style="display:none">
-            <label for="maxIterations" class="form-label">Max Iterations</label>
-            <input type="number" class="form-control" id="maxIterations" value="100">
-          </div>
-          <div class="mb-3 julia-options" style="display:none">
-            <label for="juliaCReal" class="form-label">Julia C Real</label>
-            <input type="number" class="form-control" id="juliaCReal" value="-0.4">
-          </div>
-          <div class="mb-3 julia-options" style="display:none">
-            <label for="juliaCImag" class="form-label">Julia C Imaginary</label>
-            <input type="number" class="form-control" id="juliaCImag" value="0.6">
-          </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary " data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary " id="confirmAddShape">Add Shape</button>
-      </div>
+        .box {
+            width: 480px;
+            height: 450px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: crosshair;
+        }
+
+        .box:hover {
+            transform: scale(1.05);
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .col > button {
+            margin-top: 1.5rem;
+            padding: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="text-center mt-4">Generative Art Pieces</h1>
+    <div class="text-center">
+        <button id="addCanvas" class="btn btn-primary mt-4 p-4">➕ Add New</button>
+        <button id="saveCanvas" class="btn btn-success mt-4 p-4 mx-3">💾 Save</button>
+        <button id="addShape" class="btn btn-info mt-4 p-4 mx-3">🎨 Add Shape</button>
+        <button id="modifyShape" class="btn btn-warning p-4 mt-4">✏ Modify Shape</button>
     </div>
-  </div>
-</div>
 
-<!-- Modal for Modify Shape -->
-<div class="modal fade" id="modifyShapeModal" tabindex="-1" aria-labelledby="modifyShapeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modifyShapeModalLabel">Modify Shape</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-           <div class="mb-3">
-            <label for="modifyShapeType" class="form-label">Shape Type</label>
-             <select class="form-select" id="modifyShapeType" >
-                <option value="circle">Circle</option>
-              <option value="square">Square</option>
-              <option value="triangle">Triangle</option>
-                 <option value="mandelbrot">Mandelbrot</option>
-            <option value="julia">Julia</option>
-            </select>
-          </div>
-          <div class="mb-3">
-             <label for="modifyShapeSize" class="form-label">Size</label>
-            <input type="number" class="form-control" id="modifyShapeSize" value="30">
-          </div>
-          <div class="mb-3">
-              <label for="modifyShapeColor" class="form-label">Color</label>
-              <input type="color" class="form-control form-control-color" id="modifyShapeColor" value="#000000">
-          </div>
-          <div class="mb-3">
-              <label for="modifyShapePositionX" class="form-label">X Position</label>
-              <input type="number" class="form-control" id="modifyShapePositionX" value="0">
-          </div>
-            <div class="mb-3">
-              <label for="modifyShapePositionY" class="form-label">Y Position</label>
-              <input type="number" class="form-control" id="modifyShapePositionY" value="0">
-          </div>
-             <!-- Fractal specific options  -->
-            <div class="mb-3 fractal-options" style="display:none">
-              <label for="modifyMaxIterations" class="form-label">Max Iterations</label>
-              <input type="number" class="form-control" id="modifyMaxIterations" value="100">
-            </div>
-            <div class="mb-3 julia-options" style="display:none">
-              <label for="modifyJuliaCReal" class="form-label">Julia C Real</label>
-              <input type="number" class="form-control" id="modifyJuliaCReal" value="-0.4">
-            </div>
-            <div class="mb-3 julia-options" style="display:none">
-              <label for="modifyJuliaCImag" class="form-label">Julia C Imaginary</label>
-              <input type="number" class="form-control" id="modifyJuliaCImag" value="0.6">
+    <!-- Modal for Adding Shape -->
+    <div class="modal fade" id="addShapeModal" tabindex="-1" aria-labelledby="addShapeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addShapeModalLabel">Add New Shape</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="shapeType" class="form-label">Shape Type</label>
+                        <select class="form-select" id="shapeType">
+                            <option value="circle">Circle</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="mandelbrot">Mandelbrot</option>
+                            <option value="julia">Julia</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="shapeSize" class="form-label">Size</label>
+                        <input type="number" class="form-control" id="shapeSize" value="30">
+                    </div>
+                    <div class="mb-3">
+                        <label for="shapeColor" class="form-label">Color</label>
+                        <input type="color" class="form-control form-control-color" id="shapeColor" value="#000000">
+                    </div>
+                    <div class="mb-3">
+                        <label for="shapePositionX" class="form-label">X Position</label>
+                        <input type="number" class="form-control" id="shapePositionX" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label for="shapePositionY" class="form-label">Y Position</label>
+                        <input type="number" class="form-control" id="shapePositionY" value="0">
+                    </div>
+                    <!-- Fractal specific options  -->
+                    <div class="mb-3 fractal-options" style="display:none">
+                        <label for="maxIterations" class="form-label">Max Iterations</label>
+                        <input type="number" class="form-control" id="maxIterations" value="100">
+                    </div>
+                    <div class="mb-3 julia-options" style="display:none">
+                        <label for="juliaCReal" class="form-label">Julia C Real</label>
+                        <input type="number" class="form-control" id="juliaCReal" value="-0.4">
+                    </div>
+                    <div class="mb-3 julia-options" style="display:none">
+                        <label for="juliaCImag" class="form-label">Julia C Imaginary</label>
+                        <input type="number" class="form-control" id="juliaCImag" value="0.6">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmAddShape">Add Shape</button>
+                </div>
             </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" id="confirmModifyShape">Modify Shape</button>
+    </div>
+
+    <!-- Modal for Modify Shape -->
+    <div class="modal fade" id="modifyShapeModal" tabindex="-1" aria-labelledby="modifyShapeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modifyShapeModalLabel">Modify Shape</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="modifyShapeType" class="form-label">Shape Type</label>
+                        <select class="form-select" id="modifyShapeType">
+                            <option value="circle">Circle</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="mandelbrot">Mandelbrot</option>
+                            <option value="julia">Julia</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modifyShapeSize" class="form-label">Size</label>
+                        <input type="number" class="form-control" id="modifyShapeSize" value="30">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modifyShapeColor" class="form-label">Color</label>
+                        <input type="color" class="form-control form-control-color" id="modifyShapeColor" value="#000000">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modifyShapePositionX" class="form-label">X Position</label>
+                        <input type="number" class="form-control" id="modifyShapePositionX" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modifyShapePositionY" class="form-label">Y Position</label>
+                        <input type="number" class="form-control" id="modifyShapePositionY" value="0">
+                    </div>
+                    <!-- Fractal specific options  -->
+                    <div class="mb-3 fractal-options" style="display:none">
+                        <label for="modifyMaxIterations" class="form-label">Max Iterations</label>
+                        <input type="number" class="form-control" id="modifyMaxIterations" value="100">
+                    </div>
+                    <div class="mb-3 julia-options" style="display:none">
+                        <label for="modifyJuliaCReal" class="form-label">Julia C Real</label>
+                        <input type="number" class="form-control" id="modifyJuliaCReal" value="-0.4">
+                    </div>
+                    <div class="mb-3 julia-options" style="display:none">
+                        <label for="modifyJuliaCImag" class="form-label">Julia C Imaginary</label>
+                        <input type="number" class="form-control" id="modifyJuliaCImag" value="0.6">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmModifyShape">Modify Shape</button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
 
-<div class="container text-center my-5">
-  <div class="row row-cols-2 row-cols-md- g-4" id="canvasContainer">
-    <div class="col">
-      <canvas class="box" data-shapes=""></canvas>
-      <button class="btn btn-danger mt-4 removeCanvas ">🗑 Remove</button>
+    <div class="container text-center my-5">
+        <div class="row row-cols-2 row-cols-md-2 g-4" id="canvasContainer">
+        </div>
     </div>
-    <div class="col">
-      <canvas class="box" data-shapes=""></canvas>
-      <button class="btn btn-danger mt-4 removeCanvas">🗑 Remove</button>
-    </div>
-    <div class="col">
-      <canvas class="box" data-shapes=""></canvas>
-      <button class="btn btn-danger mt-4 removeCanvas ">🗑 Remove</button>
-    </div>
-  </div>
 </div>
 
-<style>
-  .col{
-    margin-bottom: 40px;
-    text-align: center;
-  }
-  
-  .box {
-    width: 480px;
-    height: 450px;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    cursor: crosshair;
-  }
-  .box:hover {
-    transform: scale(1.05);
-    box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.3);
-  }
-  .col > button{
-    margin-top:1.5rem;
-    padding: 12px;
-  }
-</style>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  const SHAPE_TYPES = ["circle", "square", "triangle", "mandelbrot", "julia"];
-  let selectedShape = null;
-  let isDragging = false;
-  let dragOffsetX = 0;
-  let dragOffsetY = 0;
-  let currentlySelectedCanvas = null;
-  let addShapeActive = false;
-  let lastCanvasClickX = 0;
-  let lastCanvasClickY = 0;
+    const SHAPE_TYPES = ["circle", "square", "triangle", "mandelbrot", "julia"];
+    let selectedShape = null;
+    let isDragging = false;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+    let currentlySelectedCanvas = null;
+    let addShapeActive = false;
+    let lastCanvasClickX = 0;
+    let lastCanvasClickY = 0;
 
- async function fetchShapes() {
+    async function fetchShapes() {
         const response = await fetch('/generate_shapes');
         return await response.json();
     }
-  function drawShapes(canvas, shapes) {
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      shapes.forEach((shape, index) => {
-           ctx.fillStyle = shape.color;
-          ctx.strokeStyle = 'black';
-          ctx.lineWidth = 2;
+ function fetchInitialArt(canvasIndex) {
+        return fetch(`/initial_art/${canvasIndex}`)
+            .then(response => response.json());
+    }
+    function drawShapes(canvas, shapes) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        shapes.forEach((shape, index) => {
+            ctx.fillStyle = `rgb(${shape.color[0]}, ${shape.color[1]}, ${shape.color[2]})`;
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
 
-          if (shape.type === "circle") {
-              ctx.beginPath();
-              ctx.arc(shape.x, shape.y, shape.size / 2, 0, Math.PI * 2);
-              ctx.fill();
-              if (selectedShape === shape && currentlySelectedCanvas === canvas) {
-                  ctx.stroke()
-              }
-          } else if (shape.type === "square") {
-              ctx.fillRect(shape.x, shape.y, shape.size, shape.size);
-              if (selectedShape === shape && currentlySelectedCanvas === canvas) {
-                  ctx.strokeRect(shape.x, shape.y, shape.size, shape.size);
-              }
-          } else if (shape.type === "triangle") {
-              ctx.beginPath();
-              ctx.moveTo(shape.x, shape.y);
-              ctx.lineTo(shape.x + shape.size, shape.y);
-              ctx.lineTo(shape.x + shape.size / 2, shape.y - shape.size);
-              ctx.closePath();
-              ctx.fill();
-              if (selectedShape === shape && currentlySelectedCanvas === canvas) {
-                  ctx.stroke();
-              }
-          }
-          else if (shape.type === "mandelbrot") {
-              // Mock Mandelbrot rendering
-              ctx.fillRect(shape.x, shape.y, shape.size, shape.size);
-              if (selectedShape === shape && currentlySelectedCanvas === canvas) {
-                  ctx.strokeRect(shape.x, shape.y, shape.size, shape.size);
-              }
-          } else if (shape.type === "julia") {
-              // Mock Julia rendering
-              ctx.beginPath();
-              ctx.arc(shape.x, shape.y, shape.size / 2, 0, Math.PI * 2);
-              ctx.fill();
-              if (selectedShape === shape && currentlySelectedCanvas === canvas) {
-                  ctx.stroke()
-              }
-          }
-      });
-  }
+            if (shape.type === "circle") {
+                ctx.beginPath();
+                ctx.arc(shape.x, shape.y, shape.size / 2, 0, Math.PI * 2);
+                ctx.fill();
+                if (selectedShape === shape && currentlySelectedCanvas === canvas) {
+                    ctx.stroke()
+                }
+            } else if (shape.type === "square") {
+                ctx.fillRect(shape.x, shape.y, shape.size, shape.size);
+                if (selectedShape === shape && currentlySelectedCanvas === canvas) {
+                    ctx.strokeRect(shape.x, shape.y, shape.size, shape.size);
+                }
+            } else if (shape.type === "triangle") {
+                ctx.beginPath();
+                ctx.moveTo(shape.x, shape.y);
+                ctx.lineTo(shape.x + shape.size, shape.y);
+                ctx.lineTo(shape.x + shape.size / 2, shape.y - shape.size);
+                ctx.closePath();
+                ctx.fill();
+                if (selectedShape === shape && currentlySelectedCanvas === canvas) {
+                    ctx.stroke();
+                }
+            }
+            else if (shape.type === "mandelbrot") {
+                drawMandelbrot(ctx, shape.x, shape.y, shape.size, shape.max_iter);
+                if (selectedShape === shape && currentlySelectedCanvas === canvas) {
+                    ctx.strokeRect(shape.x, shape.y, shape.size, shape.size);
+                }
+            } else if (shape.type === "julia") {
+                // Mock Julia rendering
+                ctx.beginPath();
+                ctx.arc(shape.x, shape.y, shape.size / 2, 0, Math.PI * 2);
+                ctx.fill();
+                if (selectedShape === shape && currentlySelectedCanvas === canvas) {
+                    ctx.stroke()
+                }
+            }
+        });
+    }
+     function drawMandelbrot(ctx, x, y, size, maxIterations) {
+        const width = size;
+        const height = size;
+        const x0 = -2.0;
+        const x1 = 1.0;
+        const y0 = -1.5;
+        const y1 = 1.5;
 
-  function updateCanvas(canvas) {
-      const shapes = JSON.parse(canvas.dataset.shapes || '[]');
-      drawShapes(canvas, shapes)
-  }
+        for (let i = 0; i < width; i++) {
+            for (let j = 0; j < height; j++) {
+                const a = x0 + (i / width) * (x1 - x0);
+                const b = y0 + (j / height) * (y1 - y0);
+                let ca = a;
+                let cb = b;
+                let n = 0;
 
-  function getClickedShape(canvas, x, y) {
-      const shapes = JSON.parse(canvas.dataset.shapes || '[]');
-      for (let i = shapes.length - 1; i >= 0; i--) {
-          const shape = shapes[i];
-              if (shape.type === "circle") {
-              const dist = Math.sqrt((x - shape.x) ** 2 + (y - shape.y) ** 2);
-              if (dist < shape.size / 2) {
-                  return shape;
-              }
-          } else if (shape.type === "square") {
-              if (x >= shape.x && x <= shape.x + shape.size && y >= shape.y && y <= shape.y + shape.size) {
-                  return shape;
-              }
-          } else if (shape.type === "triangle") {
-              const triangleHeight = shape.size;
-              const triX1 = shape.x
-              const triY1 = shape.y
-              const triX2 = shape.x + shape.size
-              const triY2 = shape.y
-              const triX3 = shape.x + shape.size / 2
-              const triY3 = shape.y - shape.size
+                while (n < maxIterations) {
+                    const aa = ca * ca - cb * cb;
+                    const bb = 2 * ca * cb;
+                    ca = aa + a;
+                    cb = bb + b;
+                    if (ca * ca + cb * cb > 4) {
+                        break;
+                    }
+                    n++;
+                }
 
-              function pointInTriangle(px, py, x1, y1, x2, y2, x3, y3) {
-                  const A = 0.5 * (-y2 * x3 + y1 * (-x2 + x3) + x1 * (y2 - y3) + x2 * y3);
-                  const sign = A < 0 ? -1 : 1;
-                  const s = (y1 * x3 - x1 * y3 + (y3 - y1) * px + (x1 - x3) * py) * sign;
-                  const t = (x1 * y2 - y1 * x2 + (y1 - y2) * px + (x2 - x1) * py) * sign;
-                  return s > 0 && t > 0 && (s + t) < 2 * A * sign;
-              }
+                const brightness = n / maxIterations;
+                const colorValue = Math.floor(brightness * 255); // Ensure value is an integer
+                const color = `rgb(${colorValue}, ${colorValue}, ${colorValue})`; // Simple grayscale
 
-              if (pointInTriangle(x, y, triX1, triY1, triX2, triY2, triX3, triY3)) {
-                  return shape;
-              }
-          }
-        else if (shape.type === "mandelbrot" || shape.type === "julia") { // Corrected: check both fractal types
-          if (x >= shape.x && x <= shape.x + shape.size && y >= shape.y && y <= shape.y + shape.size) {
-              return shape;
-          }
-      }
-      }
-      return null;
-  }
-
-  async function initializeCanvases() {
-      const canvases = document.querySelectorAll(".box");
-      for (let i = 0; i < canvases.length; i++) {
-          const canvas = canvases[i];
-          let shapes = [];
-        if (i < 3) {
-            // For the first 3 canvases, generate random shapes/fractals
-              shapes = await fetchShapes();
+                ctx.fillStyle = color;
+                ctx.fillRect(x + i, y + j, 1, 1);
+            }
         }
-           canvas.dataset.shapes = JSON.stringify(shapes);
-          canvas.width = 480;
-          canvas.height = 450;
-          drawShapes(canvas, JSON.parse(canvas.dataset.shapes));
-          canvas.addEventListener('click', (e) => handleCanvasClick(e, canvas))
-          canvas.addEventListener('mousedown', (e) => handleCanvasMouseDown(e, canvas));
-      }
-  }
+    }
+    function updateCanvas(canvas) {
+        const shapes = JSON.parse(canvas.dataset.shapes || '[]');
+        drawShapes(canvas, shapes)
+    }
+    function getClickedShape(canvas, x, y) {
+        const shapes = JSON.parse(canvas.dataset.shapes || '[]');
+        for (let i = shapes.length - 1; i >= 0; i--) {
+            const shape = shapes[i];
+            if (shape.type === "circle") {
+                const dist = Math.sqrt((x - shape.x) ** 2 + (y - shape.y) ** 2);
+                if (dist < shape.size / 2) {
+                    return shape;
+                }
+            } else if (shape.type === "square") {
+                if (x >= shape.x && x <= shape.x + shape.size && y >= shape.y && y <= shape.y + shape.size) {
+                    return shape;
+                }
+            } else if (shape.type === "triangle") {
+                const triangleHeight = shape.size;
+                const triX1 = shape.x
+                const triY1 = shape.y
+                const triX2 = shape.x + shape.size
+                const triY2 = shape.y
+                const triX3 = shape.x + shape.size / 2
+                const triY3 = shape.y - shape.size
 
-  function handleCanvasClick(event, canvas) {
-      lastCanvasClickX = event.offsetX;
-      lastCanvasClickY = event.offsetY;
-      const x = event.offsetX;
-      const y = event.offsetY;
-      const clickedShape = getClickedShape(canvas, x, y);
-      if (clickedShape) {
-          selectedShape = clickedShape;
-          currentlySelectedCanvas = canvas;
-          document.getElementById("modifyShapeType").value = selectedShape.type
-          document.getElementById("modifyShapeSize").value = selectedShape.size
-           document.getElementById("modifyShapeColor").value = selectedShape.color;
-           document.getElementById("modifyShapePositionX").value = selectedShape.x;
-           document.getElementById("modifyShapePositionY").value = selectedShape.y;
+                function pointInTriangle(px, py, x1, y1, x2, y2, x3, y3) {
+                    const A = 0.5 * (-y2 * x3 + y1 * (-x2 + x3) + x1 * (y2 - y3) + x2 * y3);
+                    const sign = A < 0 ? -1 : 1;
+                    const s = (y1 * x3 - x1 * y3 + (y3 - y1) * px + (x1 - x3) * py) * sign;
+                    const t = (x1 * y2 - y1 * x2 + (y1 - y2) * px + (x2 - x1) * py) * sign;
+                    return s > 0 && t > 0 && (s + t) < 2 * A * sign;
+                }
+
+                if (pointInTriangle(x, y, triX1, triY1, triX2, triY2, triX3, triY3)) {
+                    return shape;
+                }
+            }
+            else if (shape.type === "mandelbrot" || shape.type === "julia") { // Corrected: check both fractal types
+                if (x >= shape.x && x <= shape.x + shape.size && y >= shape.y && y <= shape.y + shape.size) {
+                    return shape;
+                }
+            }
+        }
+        return null;
+    }
+
+    async function initializeCanvases() {
+        const canvases = document.querySelectorAll(".box");
+        for (let i = 0; i < canvases.length; i++) {
+            const canvas = canvases[i];
+            let shapes = [];
+            if (i < 3) {
+                // For the first 3 canvases, generate random shapes/fractals
+                shapes = await fetchShapes();
+            }
+            canvas.dataset.shapes = JSON.stringify(shapes);
+            canvas.width = 480;
+            canvas.height = 450;
+            drawShapes(canvas, JSON.parse(canvas.dataset.shapes));
+            canvas.addEventListener('click', (e) => handleCanvasClick(e, canvas))
+            canvas.addEventListener('mousedown', (e) => handleCanvasMouseDown(e, canvas));
+        }
+    }
+
+    function handleCanvasClick(event, canvas) {
+        lastCanvasClickX = event.offsetX;
+        lastCanvasClickY = event.offsetY;
+        const x = event.offsetX;
+        const y = event.offsetY;
+        const clickedShape = getClickedShape(canvas, x, y);
+        if (clickedShape) {
+            selectedShape = clickedShape;
+            currentlySelectedCanvas = canvas;
+            document.getElementById("modifyShapeType").value = selectedShape.type
+            document.getElementById("modifyShapeSize").value = selectedShape.size
+            const colorHex = rgbToHex(selectedShape.color[0], selectedShape.color[1], selectedShape.color[2]);
+            document.getElementById("modifyShapeColor").value = colorHex;
+            document.getElementById("modifyShapePositionX").value = selectedShape.x;
+            document.getElementById("modifyShapePositionY").value = selectedShape.y;
             // Show/hide fractal-specific options
-          const isFractal = ["mandelbrot", "julia"].includes(selectedShape.type);
-          document.querySelectorAll(".fractal-options").forEach(el => el.style.display = isFractal ? "block" : "none");
-          document.querySelectorAll(".julia-options").forEach(el => el.style.display = selectedShape.type === "julia" ? "block" : "none");
-          if (selectedShape.type === "mandelbrot" || selectedShape.type === "julia") {
+            const isFractal = ["mandelbrot", "julia"].includes(selectedShape.type);
+            document.querySelectorAll(".fractal-options").forEach(el => el.style.display = isFractal ? "block" : "none");
+            document.querySelectorAll(".julia-options").forEach(el => el.style.display = selectedShape.type === "julia" ? "block" : "none");
+            if (selectedShape.type === "mandelbrot" || selectedShape.type === "julia") {
                 document.getElementById("modifyMaxIterations").value = selectedShape.max_iter;
 
-              if(selectedShape.type === "julia"){
-               document.getElementById("modifyJuliaCReal").value = selectedShape.c_real;
-               document.getElementById("modifyJuliaCImag").value = selectedShape.c_imag;
-              }
-          }
-          const modifyShapeModal = new bootstrap.Modal(document.getElementById('modifyShapeModal'));
-          modifyShapeModal.show()
-      } else if (addShapeActive) {
-          const addShapeModal = new bootstrap.Modal(document.getElementById('addShapeModal'));
-           const selectedShapeType =  document.getElementById("shapeType").value
+                if (selectedShape.type === "julia") {
+                    document.getElementById("modifyJuliaCReal").value = selectedShape.c_real;
+                    document.getElementById("modifyJuliaCImag").value = selectedShape.c_imag;
+                }
+            }
+            const modifyShapeModal = new bootstrap.Modal(document.getElementById('modifyShapeModal'));
+            modifyShapeModal.show()
+        } else if (addShapeActive) {
+            const addShapeModal = new bootstrap.Modal(document.getElementById('addShapeModal'));
+            const selectedShapeType = document.getElementById("shapeType").value
             const isFractal = ["mandelbrot", "julia"].includes(selectedShapeType);
-              document.querySelectorAll(".fractal-options").forEach(el => el.style.display = isFractal ? "block" : "none");
-               document.querySelectorAll(".julia-options").forEach(el => el.style.display = selectedShapeType === "julia" ? "block" : "none");
-          document.getElementById("shapePositionX").value = lastCanvasClickX;
-          document.getElementById("shapePositionY").value = lastCanvasClickY;
-          addShapeModal.show()
-      }
-  }
+            document.querySelectorAll(".fractal-options").forEach(el => el.style.display = isFractal ? "block" : "none");
+            document.querySelectorAll(".julia-options").forEach(el => el.style.display = selectedShapeType === "julia" ? "block" : "none");
+            document.getElementById("shapePositionX").value = lastCanvasClickX;
+            document.getElementById("shapePositionY").value = lastCanvasClickY;
+            addShapeModal.show()
+        }
+    }
 
-  function handleCanvasMouseDown(event, canvas) {
-      const x = event.offsetX;
-      const y = event.offsetY;
-      selectedShape = getClickedShape(canvas, x, y);
-      currentlySelectedCanvas = canvas;
-      if (selectedShape) {
-          isDragging = true;
-          dragOffsetX = x - selectedShape.x;
-          dragOffsetY = y - selectedShape.y;
+    function handleCanvasMouseDown(event, canvas) {
+        const x = event.offsetX;
+        const y = event.offsetY;
+        selectedShape = getClickedShape(canvas, x, y);
+        currentlySelectedCanvas = canvas;
+        if (selectedShape) {
+            isDragging = true;
+            dragOffsetX = x - selectedShape.x;
+            dragOffsetY = y - selectedShape.y;
 
-          canvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e, canvas));
-          canvas.addEventListener('mouseup', handleCanvasMouseUp);
-          canvas.addEventListener('mouseleave', handleCanvasMouseUp);
-      }
-  }
+            canvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e, canvas));
+            canvas.addEventListener('mouseup', handleCanvasMouseUp);
+            canvas.addEventListener('mouseleave', handleCanvasMouseUp);
+        }
+    }
 
-  function handleCanvasMouseMove(event, canvas) {
-      if (isDragging && selectedShape) {
-          selectedShape.x = event.offsetX - dragOffsetX
-          selectedShape.y = event.offsetY - dragOffsetY
-          updateCanvas(canvas)
-      }
-  }
+    function handleCanvasMouseMove(event, canvas) {
+        if (isDragging && selectedShape) {
+            selectedShape.x = event.offsetX - dragOffsetX
+            selectedShape.y = event.offsetY - dragOffsetY
+            updateCanvas(canvas)
+        }
+    }
 
-  function handleCanvasMouseUp() {
-      isDragging = false;
-      document.querySelectorAll(".box").forEach(canvas => {
-          canvas.removeEventListener('mousemove', handleCanvasMouseMove);
-          canvas.removeEventListener('mouseup', handleCanvasMouseUp);
-          canvas.removeEventListener('mouseleave', handleCanvasMouseUp)
-      })
-  }
+    function handleCanvasMouseUp() {
+        isDragging = false;
+        document.querySelectorAll(".box").forEach(canvas => {
+            canvas.removeEventListener('mousemove', handleCanvasMouseMove);
+            canvas.removeEventListener('mouseup', handleCanvasMouseUp);
+            canvas.removeEventListener('mouseleave', handleCanvasMouseUp)
+        })
+    }
 
-  document.addEventListener("DOMContentLoaded", () => {
-      const container = document.getElementById("canvasContainer");
-      const addCanvasBtn = document.getElementById("addCanvas");
-      const addShapeBtn = document.getElementById('addShape');
-      const modifyShapeBtn = document.getElementById('modifyShape');
-      const saveCanvasBtn = document.getElementById("saveCanvas");
+    function rgbToHex(r, g, b) {
+        return "#" + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
+    }
 
+    function hexToRgb(hex) {
+        const bigint = parseInt(hex.slice(1), 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return [r, g, b];
+    }
 
-      //Add Shape Modal
-   document.getElementById('confirmAddShape').addEventListener('click', () => {
-    const canvas = currentlySelectedCanvas
-    const shapes = JSON.parse(canvas.dataset.shapes || '[]');
-     let newShape = {};
-    const shapeType = document.getElementById('shapeType').value;
-      if (["mandelbrot", "julia"].includes(shapeType)) {
+    document.addEventListener("DOMContentLoaded", () => {
+        const container = document.getElementById("canvasContainer");
+        const addCanvasBtn = document.getElementById("addCanvas");
+        const addShapeBtn = document.getElementById('addShape');
+        const modifyShapeBtn = document.getElementById('modifyShape');
+        const saveCanvasBtn = document.getElementById("saveCanvas");
+
+        // Initialize canvases with specific artwork
+        for (let i = 0; i < 3; i++) {
+            addCanvasWithInitialArt(i); // Pass the canvas index
+        }
+
+        function addCanvasWithInitialArt(canvasIndex) {
+            const col = document.createElement("div");
+            col.className = "col";
+            col.innerHTML = '<canvas class="box" data-shapes=""></canvas><button class="btn btn-danger mt-4 removeCanvas">🗑 Remove</button>';
+            container.appendChild(col);
+            const canvas = col.querySelector(".box");
+            canvas.width = 480;
+            canvas.height = 450;
+
+            fetchInitialArt(canvasIndex)
+                .then(shapes => {
+                    canvas.dataset.shapes = JSON.stringify(shapes);
+                    drawShapes(canvas, shapes);
+                })
+                .catch(error => console.error("Error fetching initial art:", error));
+
+            canvas.addEventListener('click', (e) => handleCanvasClick(e, canvas));
+            canvas.addEventListener('mousedown', (e) => handleCanvasMouseDown(e, canvas));
+        }
+        function addEmptyCanvas() {
+        const col = document.createElement("div");
+        col.className = "col";
+        col.innerHTML = '<canvas class="box" data-shapes=""></canvas><button class="btn btn-danger mt-4 removeCanvas">🗑 Remove</button>';
+        container.appendChild(col);
+        const canvas = col.querySelector(".box")
+        canvas.width = 480;
+        canvas.height = 450;
+        canvas.dataset.shapes = JSON.stringify([]);  // Initialize with no shapes
+
+        canvas.addEventListener('click', (e) => handleCanvasClick(e, canvas))
+        canvas.addEventListener('mousedown', (e) => handleCanvasMouseDown(e, canvas));
+    }
+    //Add Shape Modal
+    document.getElementById('confirmAddShape').addEventListener('click', () => {
+        const canvas = currentlySelectedCanvas
+        const shapes = JSON.parse(canvas.dataset.shapes || '[]');
+        let newShape = {};
+        const shapeType = document.getElementById('shapeType').value;
+        if (["mandelbrot", "julia"].includes(shapeType)) {
             newShape = {
                 type: shapeType,
                 x: parseInt(document.getElementById('shapePositionX').value),
                 y: parseInt(document.getElementById('shapePositionY').value),
                 size: parseInt(document.getElementById('shapeSize').value),
-                color: document.getElementById('shapeColor').value,
+                color: hexToRgb(document.getElementById('shapeColor').value),
                 max_iter: parseInt(document.getElementById('maxIterations').value),
             };
 
@@ -403,135 +486,170 @@
                 newShape.c_imag = parseFloat(document.getElementById('juliaCImag').value);
             }
         } else {
-             newShape = {
+            newShape = {
                 type: shapeType,
                 x: parseInt(document.getElementById('shapePositionX').value),
                 y: parseInt(document.getElementById('shapePositionY').value),
                 size: parseInt(document.getElementById('shapeSize').value),
-                color: document.getElementById('shapeColor').value,
+                color: hexToRgb(document.getElementById('shapeColor').value),
             }
         }
-    shapes.push(newShape);
-    canvas.dataset.shapes = JSON.stringify(shapes);
-    updateCanvas(canvas);
-
-    // Fermer la modale proprement
-    const modalElement = document.getElementById('addShapeModal');
-    if (modalElement) {
-        const addShapeModal = new bootstrap.Modal(modalElement);
-        addShapeModal.hide(); // Masque la modale
-    } else {
-        console.error("L'élément modal n'a pas été trouvé.");
-    }
-
-    // Réinitialiser les variables d'état
-    addShapeBtn.classList.remove("active");
-    addShapeActive = false;
-       });
-  document.getElementById('shapeType').addEventListener('change', (event) => {
-    const shapeType = event.target.value;
-    const isFractal = ["mandelbrot", "julia"].includes(shapeType);
-    document.querySelectorAll(".fractal-options").forEach(el => el.style.display = isFractal ? "block" : "none");
-     document.querySelectorAll(".julia-options").forEach(el => el.style.display = shapeType === "julia" ? "block" : "none");
-});
-
-
-      //Modify Shape Modal
-      document.getElementById('confirmModifyShape').addEventListener('click', () => {
-          const canvas = currentlySelectedCanvas;
-          selectedShape.type = document.getElementById("modifyShapeType").value;
-          selectedShape.size = parseInt(document.getElementById("modifyShapeSize").value);
-          selectedShape.color = document.getElementById("modifyShapeColor").value;
-          selectedShape.x = parseInt(document.getElementById("modifyShapePositionX").value);
-          selectedShape.y = parseInt(document.getElementById("modifyShapePositionY").value);
-
-           if (["mandelbrot", "julia"].includes(selectedShape.type)) {
-            selectedShape.max_iter = parseInt(document.getElementById("modifyMaxIterations").value);
-             if (selectedShape.type === "julia") {
-                selectedShape.c_real = parseFloat(document.getElementById('modifyJuliaCReal').value);
-                selectedShape.c_imag = parseFloat(document.getElementById('modifyJuliaCImag').value);
-            }
-        }
-
-          updateCanvas(canvas)
+        shapes.push(newShape);
+        canvas.dataset.shapes = JSON.stringify(shapes);
+        updateCanvas(canvas);
 
         // Fermer la modale proprement
-        const modifyShapeModal = document.getElementById('modifyShapeModal');
+        const modalElement = document.getElementById('addShapeModal');
+        if (modalElement) {
+            const addShapeModal = new bootstrap.Modal(modalElement);
+            addShapeModal.hide(); // Masque la modale
+        } else {
+            console.error("L'élément modal n'a pas été trouvé.");
+        }
+
+        // Réinitialiser les variables d'état
+        addShapeBtn.classList.remove("active");
+        addShapeActive = false;
+    });
+    document.getElementById('shapeType').addEventListener('change', (event) => {
+        const shapeType = event.target.value;
+        const isFractal = ["mandelbrot", "julia"].includes(shapeType);
+        document.querySelectorAll(".fractal-options").forEach(el => el.style.display = isFractal ? "block" : "none");
+        document.querySelectorAll(".julia-options").forEach(el => el.style.display = shapeType === "julia" ? "block" : "none");
+    });
+
+
+    //Modify Shape Modal
+    document.getElementById('confirmModifyShape').addEventListener('click', () => {
+        if (currentlySelectedCanvas && selectedShape) {
+            const canvas = currentlySelectedCanvas;
+            const shapes = JSON.parse(canvas.dataset.shapes);
+
+            // Update the shape properties
+            selectedShape.type = document.getElementById("modifyShapeType").value;
+            selectedShape.size = parseInt(document.getElementById("modifyShapeSize").value);
+            selectedShape.color = hexToRgb(document.getElementById("modifyShapeColor").value); // Use the converter
+            selectedShape.x = parseInt(document.getElementById("modifyShapePositionX").value);
+            selectedShape.y = parseInt(document.getElementById("modifyShapePositionY").value);
+
+            if (["mandelbrot", "julia"].includes(selectedShape.type)) {
+                selectedShape.max_iter = parseInt(document.getElementById("modifyMaxIterations").value);
+                if (selectedShape.type === "julia") {
+                    selectedShape.c_real = parseFloat(document.getElementById('modifyJuliaCReal').value);
+                    selectedShape.c_imag = parseFloat(document.getElementById('modifyJuliaCImag').value);
+                }
+            }
+
+            // Find the index of the selected shape in the shapes array
+            const shapeIndex = shapes.findIndex(shape => shape === selectedShape);
+
+            if (shapeIndex !== -1) {
+                // Replace the old shape with the modified shape in the array
+                shapes[shapeIndex] = selectedShape;
+
+                // Update the data-shapes attribute of the canvas
+                canvas.dataset.shapes = JSON.stringify(shapes);
+
+                // Redraw the canvas
+                updateCanvas(canvas);
+            }
+
+            // Fermer la modale proprement
+            const modifyShapeModal = document.getElementById('modifyShapeModal');
             const modal = bootstrap.Modal.getInstance(modifyShapeModal);
-           modal.hide();
-      });
-      document.getElementById('modifyShapeType').addEventListener('change', (event) => {
-          const shapeType = event.target.value;
-          const isFractal = ["mandelbrot", "julia"].includes(shapeType);
-            document.querySelectorAll(".fractal-options").forEach(el => el.style.display = isFractal ? "block" : "none");
-            document.querySelectorAll(".julia-options").forEach(el => el.style.display = shapeType === "julia" ? "block" : "none");
-      });
+            modal.hide();
+        }
+    });
+    document.getElementById('modifyShapeType').addEventListener('change', (event) => {
+        const shapeType = event.target.value;
+        const isFractal = ["mandelbrot", "julia"].includes(shapeType);
+        document.querySelectorAll(".fractal-options").forEach(el => el.style.display = isFractal ? "block" : "none");
+        document.querySelectorAll(".julia-options").forEach(el => el.style.display = shapeType === "julia" ? "block" : "none");
+    });
 
-      addCanvasBtn.addEventListener("click", () => {
-          const col = document.createElement("div");
-          col.className = "col";
-          col.innerHTML = '<canvas class="box" data-shapes=""></canvas><button class="btn btn-danger mt-4 removeCanvas">🗑 Remove</button>';
-          container.appendChild(col);
-          const canvas = col.querySelector(".box")
-           canvas.width = 480;
-          canvas.height = 450;
-            //All other is empty at creation time
-          canvas.addEventListener('click', (e) => handleCanvasClick(e, canvas))
-          canvas.addEventListener('mousedown', (e) => handleCanvasMouseDown(e, canvas));
-      });
+    addCanvasBtn.addEventListener("click", () => {
+        addEmptyCanvas(); // Add new canva that user can draw add shapes and modify and also save
+    });
 
-      addShapeBtn.addEventListener('click', () => {
-          addShapeBtn.classList.toggle("active");
-          addShapeActive = !addShapeActive;
-          if (modifyShapeBtn.classList.contains("active")) {
-              modifyShapeBtn.classList.remove("active")
-          }
-      });
+    addShapeBtn.addEventListener('click', () => {
+        addShapeBtn.classList.toggle("active");
+        addShapeActive = !addShapeActive;
+        if (modifyShapeBtn.classList.contains("active")) {
+            modifyShapeBtn.classList.remove("active")
+        }
+    });
 
-      modifyShapeBtn.addEventListener('click', () => {
-          modifyShapeBtn.classList.toggle("active")
-          if (addShapeBtn.classList.contains("active")) {
-              addShapeBtn.classList.remove("active")
-              addShapeActive = false;
-          }
-      });
+    modifyShapeBtn.addEventListener('click', () => {
+        modifyShapeBtn.classList.toggle("active")
+        if (addShapeBtn.classList.contains("active")) {
+            addShapeBtn.classList.remove("active")
+            addShapeActive = false;
+        }
+    });
 
 
-      container.addEventListener("click", (event) => {
-          if (event.target.classList.contains("removeCanvas")) {
-              event.target.parentElement.remove();
-              selectedShape = null;
-              currentlySelectedCanvas = null;
-          }
-      });
+    container.addEventListener("click", (event) => {
+        if (event.target.classList.contains("removeCanvas")) {
+            event.target.parentElement.remove();
+            selectedShape = null;
+            currentlySelectedCanvas = null;
+        }
+    });
 
-      saveCanvasBtn.addEventListener("click", () => {
-          document.querySelectorAll(".box").forEach((canvas, index) => {
-              const link = document.createElement("a");
-              link.download = `canvas_${index + 1}.png`;
-              link.href = canvas.toDataURL("image/png");
-              link.click();
-          });
-      });
-  });
+    saveCanvasBtn.addEventListener("click", () => {
+        document.querySelectorAll(".box").forEach((canvas, index) => {
+            const link = document.createElement("a");
+            link.download = `canvas_${index + 1}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        });
+    });
+});
 
-    //cancel button event listener
-   const buttoncancel = document.querySelector('.btn-secondary[data-bs-dismiss="modal"]');
-   buttoncancel.addEventListener("click", () => {
-       //Get the modal element
-       const addShapeModal = document.getElementById('addShapeModal');
-       if (addShapeModal) {
-          //Use Bootstrap to close the modal
-           const bootstrapModal = bootstrap.Modal.getInstance(addShapeModal);
-           bootstrapModal.hide(); //Close the modal correctly
-          //Reset the button state
-           addShapeBtn.classList.remove("active");
-           addShapeActive = false;
-       } else {
-           console.error("The modal was not found.");
-       }
-   });
-   //cancel button end
-window.onload = initializeCanvases;
+//cancel button event listener
+const buttoncancel = document.querySelector('.btn-secondary[data-bs-dismiss="modal"]');
+buttoncancel.addEventListener("click", () => {
+    //Get the modal element
+    const addShapeModal = document.getElementById('addShapeModal');
+    if (addShapeModal) {
+        //Use Bootstrap to close the modal
+        const bootstrapModal = bootstrap.Modal.getInstance(addShapeModal);
+        bootstrapModal.hide(); //Close the modal correctly
+        //Reset the button state
+        addShapeBtn.classList.remove("active");
+        addShapeActive = false;
+    } else {
+        console.error("The modal was not found.");
+    }
+});
+//cancel button end
+window.onload = () => {
+        // Create the initial three canvases
+        const canvasContainer = document.getElementById("canvasContainer");
+
+        // Create an initial set of canvases.
+        for (let i = 0; i < 3; i++) {
+            const col = document.createElement("div");
+            col.className = "col";
+            col.innerHTML = '<canvas class="box" data-shapes=""></canvas><button class="btn btn-danger mt-4 removeCanvas">🗑 Remove</button>';
+            canvasContainer.appendChild(col);
+            const canvas = col.querySelector(".box")
+            canvas.width = 480;
+            canvas.height = 450;
+
+            // Fetch and draw random shapes
+            fetchInitialArt(i)
+                .then(shapes => {
+                    canvas.dataset.shapes = JSON.stringify(shapes);
+                    drawShapes(canvas, shapes);
+                })
+                .catch(error => console.error("Error fetching initial art:", error));
+
+            canvas.addEventListener('click', (e) => handleCanvasClick(e, canvas))
+            canvas.addEventListener('mousedown', (e) => handleCanvasMouseDown(e, canvas));
+        }
+    }
+
 </script>
+
 {% endblock %}

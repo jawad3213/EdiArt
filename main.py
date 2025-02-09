@@ -26,51 +26,229 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 if not os.path.exists(app.config['MODIFIED_FOLDER']):
     os.makedirs(app.config['MODIFIED_FOLDER'])
 
-# Route et fonction pour générer des formes aléatoires
-def generate_random_shapes(n=30):
+
+
+
+
+
+
+class Shape:
+    """Base class for shapes and fractals."""
+
+    def __init__(self, x, y, size, color):
+        self.x = x
+        self.y = y
+        self.size = size
+        self.color = color  # Format (R, G, B)
+
+    def to_dict(self):
+        """Method to be redefined in subclasses."""
+        raise NotImplementedError("This method must be implemented in subclasses.")
+
+
+class Circle(Shape):
+    """Class for a circle."""
+
+    def __init__(self, x, y, size, color):
+        super().__init__(x, y, size, color)
+
+    def to_dict(self):
+        return {
+            "type": "circle",
+            "x": self.x,
+            "y": self.y,
+            "size": self.size,
+            "color": self.color
+        }
+
+
+class Square(Shape):
+    """Class for a square."""
+
+    def __init__(self, x, y, size, color):
+        super().__init__(x, y, size, color)
+
+    def to_dict(self):
+        return {
+            "type": "square",
+            "x": self.x,
+            "y": self.y,
+            "size": self.size,
+            "color": self.color
+        }
+
+import math
+class Triangle(Shape):
+    """Class for an equilateral triangle."""
+
+    def __init__(self, x, y, size, color):
+        super().__init__(x, y, size, color)
+
+    def to_dict(self):
+        return {
+            "type": "triangle",
+            "x": self.x,
+            "y": self.y,
+            "size": self.size,
+            "color": self.color
+        }
+
+
+class Fractal(Shape):
+    """Base class for fractals."""
+
+    def __init__(self, x, y, size, color):
+        super().__init__(x, y, size, color)
+
+    def to_dict(self):
+        """Method to be redefined in subclasses."""
+        raise NotImplementedError("This method must be implemented in subclasses.")
+
+
+class Mandelbrot(Fractal):
+    """Class for a Mandelbrot set."""
+
+    def __init__(self, x, y, size, color, max_iter=100):
+        super().__init__(x, y, size, color)
+        self.max_iter = max_iter  # Maximum iterations for Mandelbrot calculation
+
+    def to_dict(self):
+        return {
+            "type": "mandelbrot",
+            "x": self.x,
+            "y": self.y,
+            "size": self.size,
+            "color": self.color,
+            "max_iter": self.max_iter
+        }
+
+
+class Julia(Fractal):
+    """Class for a Julia set."""
+
+    def __init__(self, x, y, size, color, c_real=-0.4, c_imag=0.6, max_iter=100):
+        super().__init__(x, y, size, color)
+        self.c_real = c_real  # Real part of the constant C
+        self.c_imag = c_imag  # Imaginary part of the constant C
+        self.max_iter = max_iter  # Maximum iterations
+
+    def to_dict(self):
+        return {
+            "type": "julia",
+            "x": self.x,
+            "y": self.y,
+            "size": self.size,
+            "color": self.color,
+            "c_real": self.c_real,
+            "c_imag": self.c_imag,
+            "max_iter": self.max_iter
+        }
+
+
+def generate_spiral_circles(x_center, y_center, num_circles=20, initial_radius=10, radius_increment=5):
+    """Generates a spiral of circles."""
+    circles = []
+    for i in range(num_circles):
+        radius = initial_radius + i * radius_increment
+        x = int(x_center + radius * math.cos(i / 3))  # Spiral effect
+        y = int(y_center + radius * math.sin(i / 3))
+        color = [random.randint(0, 255) for _ in range(3)]
+        circles.append(Circle(x, y, radius * 2, color).to_dict())  # Diameter for size
+    return circles
+
+
+def generate_concentric_squares(x_center, y_center, num_squares=15, initial_size=15, size_increment=10):
+    """Generates concentric squares with alternating colors."""
+    squares = []
+    for i in range(num_squares):
+        size = initial_size + i * size_increment
+        x = x_center - size // 2
+        y = y_center - size // 2
+        if i % 2 == 0:  # Alternate colors
+            color = [random.randint(0, 255) for _ in range(3)]
+        else:
+            color = [random.randint(0, 255) for _ in range(3)]
+        squares.append(Square(x, y, size, color).to_dict())
+    return squares
+
+
+def generate_triangle_pattern(x_start, y_start, num_rows=10, triangle_size=20, row_offset=15):
+    """Generates a pattern of triangles."""
+    triangles = []
+    for row in range(num_rows):
+        for col in range(row + 1):
+            x = x_start + col * (triangle_size + row_offset) - row * (triangle_size + row_offset) / 2
+            y = y_start + row * (triangle_size * 1.5)  # Adjust for triangle height
+            color = [random.randint(0, 255) for _ in range(3)]
+            triangles.append(Triangle(int(x), int(y), triangle_size, color).to_dict())
+    return triangles
+
+
+def get_initial_artwork(index):
+    """Returns the initial artwork for a given canvas index."""
+    if index == 0:
+        return generate_spiral_circles(240, 225)  # Center the spiral
+    elif index == 1:
+        return generate_concentric_squares(240, 225)  # Center the squares
+    elif index == 2:
+        return generate_triangle_pattern(50, 50)  # Start point for triangles
+    else:
+        return generate_random_fractals(random.randint(3, 7))  # Default random
+
+
+def generate_random_fractals(n=10):
+    """Génère N formes aléatoires."""
     shapes = []
     for _ in range(n):
-        shape_type = random.choice(["circle", "square", "triangle", "mandelbrot", "julia"])
-        x = random.randint(50, 300)
-        y = random.randint(50, 300)
-        size = random.randint(30, 70)
-        color = [random.randint(0, 255) for _ in range(3)]
+        shape_type = random.choice([Circle, Square, Triangle, Mandelbrot, Julia])  # Choix aléatoire de classe
+        x = random.randint(50, 350)  # Position X aléatoire
+        y = random.randint(50, 350)  # Position Y aléatoire
+        size = random.randint(30, 70)  # Taille aléatoire
+        color = [random.randint(0, 255) for _ in range(3)]  # Couleur RGB aléatoire
 
-        if shape_type == "mandelbrot":
-            shape = {
-                "type": "mandelbrot",
-                "x": x,
-                "y": y,
-                "size": size,
-                "color": f"rgb({color[0]}, {color[1]}, {color[2]})",
-                "max_iter": random.randint(50, 200)
-            }
-        elif shape_type == "julia":
-            shape = {
-                "type": "julia",
-                "x": x,
-                "y": y,
-                "size": size,
-                "color": f"rgb({color[0]}, {color[1]}, {color[2]})",
-                "c_real": random.uniform(-1, 1),
-                "c_imag": random.uniform(-1, 1),
-                "max_iter": random.randint(50, 200)
-            }
-        else:
-            shape = {
-                "type": shape_type,
-                "x": x,
-                "y": y,
-                "size": size,
-                "color": f"rgb({color[0]}, {color[1]}, {color[2]})"
-            }
-        shapes.append(shape)
+        if shape_type == Mandelbrot:
+            max_iter = random.randint(50, 200)  # Random max iterations for fractals
+            shape = Mandelbrot(x, y, size, color, max_iter)
+
+        elif shape_type == Julia:
+            max_iter = random.randint(50, 200)  # Random max iterations for fractals
+            c_real = random.uniform(-1, 1)  # Random real part for Julia set constant
+            c_imag = random.uniform(-1, 1)  # Random imaginary part
+            shape = Julia(x, y, size, color, c_real, c_imag, max_iter)
+        elif shape_type == Circle:
+            shape = Circle(x, y, size, color)  # Circle radius is the javascript side will take care of the radius problem.
+        elif shape_type == Square:
+            shape = Square(x, y, size, color)
+        elif shape_type == Triangle:
+            shape = Triangle(x, y, size, color)
+
+        shapes.append(shape.to_dict())
 
     return shapes
-@app.route("/generate_shapes")
-def generate_shapes_route():
-    shapes = generate_random_shapes()
+
+  # Replace with your HTML filename
+
+
+
+
+
+@app.route('/initial_art/<int:canvas_index>')
+def initial_art(canvas_index):
+    shapes = get_initial_artwork(canvas_index)
     return jsonify(shapes)
+
+
+
+
+@app.route('/generate_shapes')
+def generate_shapes_route():
+    shapes = generate_random_fractals(n=random.randint(3, 7))  # Generate a random number of shapes
+    return jsonify(shapes)
+
+
+
+
+
 
 
 
