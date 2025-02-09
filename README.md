@@ -32,7 +32,7 @@ A multi-functional gallery web application built with Flask. This project showca
   
      In your git bash tap the following:
      git clone https://github.com/jawad3213/EdioArt.git
-     cd EdioArtGallery
+cd EdioArtGallery
   
   2. **Create a Virtual Environment:**
       python -m venv venv
