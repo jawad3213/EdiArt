@@ -44,20 +44,20 @@ cd EdioArtGallery
 ## Setup Instructions
     pip install Pygame matplotlib seaborn Pandas PIL pyDub flask pillow plotly
 
-   **Directory Structure:**
-     1. The application expects the following directory structure for storing files:
-        **static/uploads** — For storing uploaded files (images and audio).
-        **static/modified** — For storing modified audio files.
+   - **Directory Structure:**
+      The application expects the following directory structure for storing files:
+       1. **static/uploads** — For storing uploaded files (images and audio).
+        2. **static/modified** — For storing modified audio files.
      2. The application code will automatically create these folders if they do not exist. However, ensure your environment allows the application to create 
         directories in the project path.
-   **Configuration:**
+  - **Configuration:**
      The Flask application's secret key is set within the code (app.config['SECRET_KEY'] = 'jawad').
      Audio and image upload paths are configured under app.config['UPLOAD_FOLDER'] and app.config['MODIFIED_FOLDER'].
      For audio processing, make sure FFmpeg is installed and correctly configured.
 
 ## Running the Application
-  To start the Flask development server, simply run: **python main.py**
-  The application will start on **http://127.0.0.1:5000/.** Open this URL in your web browser to access the gallery.
+  -To start the Flask development server, simply run: **python main.py**
+  -The application will start on **http://127.0.0.1:5000/.** Open this URL in your web browser to access the gallery.
     
 ## Application Routes
 
