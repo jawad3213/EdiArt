@@ -12,6 +12,7 @@ from flask import Flask, request, render_template, send_file, redirect, url_for
 from PIL import Image, ImageFilter, ImageOps
 import os
 from werkzeug.utils import secure_filename
+import plotly.graph_objects as go
 
 # Configure Matplotlib for non-interactive environments
 matplotlib.use('Agg')
@@ -105,36 +106,46 @@ def registerpage():
     return render_template('register.html', form=form)
 
 
-@app.route('/Data v1')
-def Datapage():
-    n_points = 100
-    df = pd.DataFrame({"Value": np.random.randint(10, 100, size=n_points)})
-    theta = np.linspace(0, 4 * np.pi, n_points)
-    r = df["Value"].values + np.random.uniform(0, 5, size=n_points)
 
-    plt.figure(figsize=(8, 8))
-    ax = plt.subplot(111, projection='polar')
-    scatter = ax.scatter(theta, r, c=r, cmap='magma', alpha=0.7, s=r*2, edgecolor='white')
     
-    ax.set_facecolor("#111111")
-    ax.grid(False)
-    ax.spines['polar'].set_visible(False)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    plt.title("Abstract Polar Swirl", color='white', fontsize=16, pad=20)
+@app.route('/Data_v1')
+def Datapage():
+    # Charger les données
+    data = pd.read_csv("large_art_ecommerce_dataset.csv")
 
-    cbar = plt.colorbar(scatter, pad=0.1)
-    cbar.set_label("Data Value", color='white')
-    cbar.outline.set_edgecolor('white')
-    plt.setp(cbar.ax.yaxis.get_ticklabels(), color='white')
+    # Créer une grille pour la surface
+    size_values = data['Size'].unique()
+    style_values = data['Style'].unique()
 
-    buf = io.BytesIO()
-    plt.tight_layout()
-    plt.savefig(buf, format='png', facecolor='#111111')
-    plt.close()
-    plot_data = base64.b64encode(buf.getvalue()).decode("utf-8")
+    # Créer des matrices pour la taille et le prix
+    Z = []
+    for style in style_values:
+        row = []
+        for size in size_values:
+            # Moyenne des prix pour une combinaison donnée
+            avg_price = data[(data['Size'] == size) & (data['Style'] == style)]['Price ($)'].mean()
+            row.append(avg_price)
+        Z.append(row)
 
-    return render_template("Data.html", plot_data=plot_data)
+    # Créer une figure avec Plotly
+    fig = go.Figure(data=[go.Surface(z=Z, x=size_values, y=style_values, colorscale='Viridis')])
+
+    # Ajouter des titres et labels
+    fig.update_layout(
+        scene=dict(
+            xaxis_title='Size',
+            yaxis_title='Style',
+            zaxis_title='Price ($)',
+        ),
+        title="3D Heatmap of Art Market Dataset - Price vs. Size & Style",
+        template='plotly_dark'
+    )
+
+    # Exporter la figure en fichier HTML
+    fig_html = fig.to_html(full_html=False)
+
+    # Rendre la page avec le graphique
+    return render_template('Data.html', plot=fig_html)
 
 @app.route('/Data v2')
 def Datapage1():
