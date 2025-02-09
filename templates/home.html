@@ -1,8 +1,12 @@
+
 {% extends 'useful1.html' %}
 {% block title %}
-  Home Page
+Home Page
 {% endblock %}
 {% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Fugaz+One&display=swap" rel="stylesheet">
+
+
 <style>
   /* ========== Reset & Base Styles ========== */
   * {
@@ -10,6 +14,7 @@
     padding: 0;
     box-sizing: border-box;
   }
+
   body {
     font-family: 'Poppins', sans-serif;
     line-height: 1.6;
@@ -28,6 +33,7 @@
     text-align: center;
     color: #fff;
   }
+
   #hero::after {
     content: "";
     position: absolute;
@@ -35,40 +41,62 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* dark overlay */
+    background: rgba(0, 0, 0, 0.5);
+    /* dark overlay */
     z-index: 1;
   }
+
   .hero-content {
     position: relative;
     z-index: 2;
   }
+
   .hero-content .logo {
-    width: 100px;
+    width: 150px;
     margin-bottom: 1rem;
-    transition: transform 0.3s ease-in-out;
+    transition: 0.3s ease-in-out;
+    display: inline-block;
+    transform: scale(1);
+    /* Start at original size */
   }
+
   .hero-content .logo:hover {
-    transform: scale(1.2);
+    transform: scale(1.9);
+    /* Scale up when hovered */
   }
+
   #hero h1 {
     font-size: 3rem;
     margin-bottom: 0.5rem;
-    margin-top: 2rem;
+    margin-top: 4rem;
+
+    font-family: 'Fugaz One', sans-serif;
+    font-size: 3rem;
+    /* adjust size as needed */
+
+
   }
+
   #hero p {
-    font-size: 1.25rem;
+    
+    font-family: 'Fugaz One', sans-serif;
+    font-size: 2rem;
   }
 
   /* ========== Section 2: Brand Presentation ========== */
   #brand {
     padding: 4rem 2rem;
-    background: #f4f4f4;
+    background: linear-gradient(30deg, #3b1363, #586489);
+    color: #fff;
     text-align: center;
   }
+
   #brand h2 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
+    
   }
+
   #brand p {
     max-width: 800px;
     margin: 0 auto;
@@ -79,53 +107,64 @@
   .service {
     /* Reduced padding from 4rem 2rem to 2rem 2rem to decrease height */
     padding: 0rem 1rem 0rem;
+    color: aliceblue;
   }
+
   .service:nth-of-type(even) {
-    background: #fafafa;
+    background: linear-gradient(30deg, #3b1363, #445588);
   }
+
   .service-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
   }
+
   .service-text {
     flex: 1;
     padding-right: 2rem;
   }
+
   .service-text h2 {
     font-size: 2rem;
     margin-bottom: 1rem;
   }
+
   .service-text p {
     font-size: 1.1rem;
   }
+
   .service-image {
     flex: 1;
     display: flex;
     justify-content: center;
     min-width: 300px;
   }
+
   .service-image img {
-    max-width: 100%;
+    max-width: 50%;
     border-radius: 10px;
   }
 
   /* ========== Section 4: Call to Action ========== */
   #cta {
     padding: 4rem 2rem;
-    background: #222;
+    background: linear-gradient(60deg, #ff9900, #8000ff);
     color: #fff;
     text-align: center;
   }
+
   #cta h2 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
   }
+
   #cta p {
     font-size: 1.1rem;
     margin-bottom: 2rem;
   }
+
   .cta-form {
     display: flex;
     justify-content: center;
@@ -133,6 +172,7 @@
     flex-wrap: wrap;
     gap: 10px;
   }
+
   .cta-form input[type="email"] {
     padding: 0.75rem;
     width: 250px;
@@ -140,6 +180,7 @@
     border-radius: 5px;
     font-size: 1rem;
   }
+
   .cta-form button {
     padding: 0.75rem 1.5rem;
     border: none;
@@ -150,6 +191,7 @@
     cursor: pointer;
     transition: background 0.3s ease;
   }
+
   .cta-form button:hover {
     background: #e88e00;
   }
@@ -165,29 +207,35 @@
     .service-content {
       flex-direction: column;
     }
+
     .service-text,
     .service-image {
       padding: 0;
       text-align: center;
     }
+
     .service-text {
       margin-bottom: 2rem;
     }
+
     #hero h1 {
       font-size: 2.5rem;
     }
+
     #hero p {
       font-size: 1rem;
     }
   }
 </style>
+
 <body>
   <!-- Section 1: Hero -->
-  <section id="hero" style="background-image: url('https://wallpapersmug.com/download/1600x900/dea621/mountain-peak-birds-horizon-digital-art.jpg')">
+  <section id="hero"
+    style="background-image: url('https://wallpapersmug.com/download/1600x900/dea621/mountain-peak-birds-horizon-digital-art.jpg')">
     <div class="hero-content">
       <!-- Replace logo.png with your actual logo image -->
       <img src="static\Images\1.png" alt="Edioart Logo" class="logo" style="transform: scale(2)" />
-      <h1>Edioart</h1>
+      <h1>EdioArt</h1>
       <p>Your gateway to creative innovation</p>
     </div>
   </section>
@@ -197,7 +245,8 @@
     <div class="container">
       <h2>Our Brand</h2>
       <p>
-        At Edioart, we merge art with technology. We strive to empower creativity through innovative solutions that redefine the way you experience art.
+        At Edioart, we merge art with technology. We strive to empower creativity through innovative solutions that
+        redefine the way you experience art.
       </p>
     </div>
   </section>
@@ -207,46 +256,49 @@
   <section class="service">
     <div class="service-content">
       <div class="service-text">
-        <h2>Art Generator</h2>
-        <p>
-          Unleash your creative potential with our advanced art generator. Turn your ideas into stunning visual masterpieces.
+        <h2 style="color: #000">Art Generator</h2>
+        <p style="color: #000">
+          Unleash your creative potential with our advanced art generator. Turn your ideas into stunning visual
+          masterpieces.
         </p>
       </div>
       <div class="service-image">
         <!-- Replace art-generator.jpg with your actual service image -->
-        <img src="static\Images\ArtVisualization.webp" alt="Art Generator" style="transform: scale(0.7)" />
+        <img src="static\Images\ArtVisualization.webp" alt="Art Generator" style="transform: scale(0.9)" />
       </div>
     </div>
   </section>
 
-  <!-- Service 2: Data Visualization -->
+
   <section class="service">
     <div class="service-content">
       <div class="service-text">
-        <h2>Data Visualization</h2>
+        <h2 >Data Visualization</h2>
         <p>
-          Transform complex data into engaging visuals. Our data visualization tools help you reveal insights with clarity and style.
+          Transform raw data into breathtaking visual art with our cutting-edge data visualization tools. Elevate complex information into stunning, interactive masterpieces that captivate, inform, and inspire your audience.
         </p>
       </div>
       <div class="service-image">
-        <!-- Replace data-visualization.jpg with your actual service image -->
-        <img src="static\Images\DataVisualization.webp" alt="Data Visualization" style="transform: scale(0.7)"/>
+        <!-- Replace art-generator.jpg with your actual service image -->
+        <img src="static\Images\DataVisualization.webp" alt="Art Generator" style="transform: scale(0.9)" />
       </div>
     </div>
   </section>
+
+  
 
   <!-- Service 3: Image Editor -->
   <section class="service">
     <div class="service-content">
       <div class="service-text">
-        <h2>Image Editor</h2>
-        <p>
-          Edit and enhance your images effortlessly with our intuitive image editor. Bring your photos to life with a range of powerful tools.
+        <h2 style="color: #000000">Image Editor</h2>
+        <p style="color: #000000">
+          Effortlessly transform your images with our professional-grade editor. Enhance, refine, and bring your photos to life using a comprehensive suite of powerful, easy-to-use tools designed for stunning results.
         </p>
       </div>
       <div class="service-image">
         <!-- Replace image-editor.jpg with your actual service image -->
-        <img src="static\Images\imageArtphoto.webp" alt="Image Editor" style="transform: scale(0.7)"/>
+        <img src="static\Images\imageArtphoto.webp" alt="Image Editor" style="transform: scale(0.9)" />
       </div>
     </div>
   </section>
@@ -257,12 +309,12 @@
       <div class="service-text">
         <h2>Audio Editor</h2>
         <p>
-          Refine and mix your audio tracks with our professional audio editor. Perfect your sound with precision and ease.
+          Refine, mix, and master your audio tracks with our professional-grade audio editor. Whether you're a seasoned producer or just starting out, our intuitive tools let you perfect every detail of your sound with precision and ease.
         </p>
       </div>
       <div class="service-image">
         <!-- Replace audio-editor.jpg with your actual service image -->
-        <img src="static\Images\audioArtphoto.webp" alt="Audio Editor" style="transform: scale(0.7)" />
+        <img src="static\Images\audioArtphoto.webp" alt="Audio Editor" style="transform: scale(0.9) "/>
       </div>
     </div>
   </section>
@@ -281,5 +333,6 @@
     </div>
   </section>
 </body>
+
 </html>
 {% endblock %}
