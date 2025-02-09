@@ -1,10 +1,10 @@
-{% extends 'useful.html' %}
+{% extends 'useful1.html' %}
 {% block title %}
   Art_Generator Page
 {% endblock %}
 {% block content %}
 
-<h1 class="text-center mt-4 ">Generative Art Pieces</h1>
+<h1 class="text-center mt-4">Generative Art Pieces</h1>
 <div class="text-center">
   <button id="addCanvas" class="btn btn-primary mt-4 p-4">➕ Add New</button>
   <button id="saveCanvas" class="btn btn-success mt-4 p-4 mx-3">💾 Save</button>
@@ -149,13 +149,11 @@
     margin-bottom: 40px;
     text-align: center;
   }
-  h1{
-    color: white;
-  }
+  
   .box {
     width: 480px;
     height: 450px;
-    background-color: rgb(204, 204, 204);
+    background-color: white;
     border-radius: 10px;
     box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.2);
     display: flex;
@@ -172,9 +170,6 @@
     margin-top:1.5rem;
     padding: 12px;
   }
-body{
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
-}
 </style>
 <script>
   const SHAPE_TYPES = ["circle", "square", "triangle", "mandelbrot", "julia"];

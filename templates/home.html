@@ -1,211 +1,285 @@
-{% extends 'useful.html' %}
+{% extends 'useful1.html' %}
 {% block title %}
   Home Page
 {% endblock %}
-
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Save Earth - Landing Page</title>
-  <style>
-    /* General Styles */
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      background-color: #3A3960; /* Dark background */
-      color: #fff; /* Default text color */
-    }
+<style>
+  /* ========== Reset & Base Styles ========== */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: #fff;
+  }
 
-    .container {
-      display: flex;
+  /* ========== Section 1: Hero ========== */
+  #hero {
+    position: relative;
+    height: 100vh;
+    background: url('background-hero.jpg') no-repeat center center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+  }
+  #hero::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* dark overlay */
+    z-index: 1;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+  }
+  .hero-content .logo {
+    width: 100px;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease-in-out;
+  }
+  .hero-content .logo:hover {
+    transform: scale(1.2);
+  }
+  #hero h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    margin-top: 2rem;
+  }
+  #hero p {
+    font-size: 1.25rem;
+  }
+
+  /* ========== Section 2: Brand Presentation ========== */
+  #brand {
+    padding: 4rem 2rem;
+    background: #f4f4f4;
+    text-align: center;
+  }
+  #brand h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  #brand p {
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: 1.1rem;
+  }
+
+  /* ========== Section 3: Services ========== */
+  .service {
+    /* Reduced padding from 4rem 2rem to 2rem 2rem to decrease height */
+    padding: 0rem 1rem 0rem;
+  }
+  .service:nth-of-type(even) {
+    background: #fafafa;
+  }
+  .service-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .service-text {
+    flex: 1;
+    padding-right: 2rem;
+  }
+  .service-text h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  .service-text p {
+    font-size: 1.1rem;
+  }
+  .service-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    min-width: 300px;
+  }
+  .service-image img {
+    max-width: 100%;
+    border-radius: 10px;
+  }
+
+  /* ========== Section 4: Call to Action ========== */
+  #cta {
+    padding: 4rem 2rem;
+    background: #222;
+    color: #fff;
+    text-align: center;
+  }
+  #cta h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  #cta p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+  .cta-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .cta-form input[type="email"] {
+    padding: 0.75rem;
+    width: 250px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  .cta-form button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    background: #ff9900;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  .cta-form button:hover {
+    background: #e88e00;
+  }
+
+  /* ========== Container Utility ========== */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* ========== Responsive Adjustments ========== */
+  @media (max-width: 768px) {
+    .service-content {
       flex-direction: column;
-      min-height: 100vh; /* Occupy full viewport height */
-      padding: 20px;
-      box-sizing: border-box;
     }
-
-    /* Header Styles */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      font-size: 1.2em;
-      font-weight: bold;
-      color: #fff;
-    }
-
-    .logo img {
-      width: 30px;
-      margin-right: 10px;
-    }
-
-    nav ul {
-      list-style: none;
-      display: flex;
-    }
-
-    nav li {
-      margin-left: 20px;
-    }
-
-    nav a {
-      text-decoration: none;
-      color: #fff;
-      font-size: 0.9em;
-    }
-
-    /* Hero Section Styles */
-    .hero {
-      text-align: left;
-      padding: 50px 0;
-    }
-
-    .hero h1 {
-      font-size: 5em;
-      font-weight: bold;
-      margin-bottom: 20px;
-      line-height: 1; /* Reduced line height for "Mother Earth" */
-    }
-
-    .hero p {
-      font-size: 1.3em;
-      margin-bottom: 30px;
-    }
-
-    .hero button {
-      background-color: #32cd32; /* Lime green */
-      color: #fff;
-      border: none;
-      padding: 15px 30px;
-      font-size: 1.1em;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    .hero button:hover {
-      background-color: #228b22; /* Darker green on hover */
-    }
-
-    /* Features Section Styles */
-    .features {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 50px;
-    }
-
-    .feature-card {
-      background-color: #0a294d; /* Darker card background */
-      padding: 25px;
-      border-radius: 10px;
-      width: 45%; /* Adjusted width to make cards wider */
-      box-sizing: border-box;
-      text-align: left;
-    }
-
-    .feature-card h3 {
-      font-size: 1.5em;
-      margin-bottom: 15px;
-    }
-
-    .feature-card p {
-      font-size: 1em;
-      margin-bottom: 20px;
-    }
-
-    .feature-card a {
-      color: #32cd32; /* Lime green */
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      transition: color 0.3s;
-    }
-
-    .feature-card a:hover {
-      color: #228b22; /* Darker green on hover */
-    }
-
-    .feature-card a svg {
-      margin-left: 5px;
-      width: 20px;  /* Example icon size */
-      height: 20px;
-    }
-
-    /* Footer Styles */
-    footer {
+    .service-text,
+    .service-image {
+      padding: 0;
       text-align: center;
-      margin-top: 50px;
-      padding: 20px 0;
-      font-size: 0.8em;
-      color: #888;
     }
-
-    /* Responsive Design (Example) */
-    @media (max-width: 768px) {
-      .features {
-        flex-direction: column;
-      }
-
-      .feature-card {
-        width: 100%;
-        margin-bottom: 20px;
-      }
-
-      .hero h1 {
-        font-size: 4em; /* Smaller heading on smaller screens */
-      }
+    .service-text {
+      margin-bottom: 2rem;
     }
-  </style>
-</head>
+    #hero h1 {
+      font-size: 2.5rem;
+    }
+    #hero p {
+      font-size: 1rem;
+    }
+  }
+</style>
 <body>
+  <!-- Section 1: Hero -->
+  <section id="hero" style="background-image: url('https://wallpapersmug.com/download/1600x900/dea621/mountain-peak-birds-horizon-digital-art.jpg')">
+    <div class="hero-content">
+      <!-- Replace logo.png with your actual logo image -->
+      <img src="static\Images\1.png" alt="Edioart Logo" class="logo" style="transform: scale(2)" />
+      <h1>Edioart</h1>
+      <p>Your gateway to creative innovation</p>
+    </div>
+  </section>
 
-  <div class="container">
+  <!-- Section 2: Brand Presentation -->
+  <section id="brand">
+    <div class="container">
+      <h2>Our Brand</h2>
+      <p>
+        At Edioart, we merge art with technology. We strive to empower creativity through innovative solutions that redefine the way you experience art.
+      </p>
+    </div>
+  </section>
 
-
-    <section class="hero">
-      <h1>Welcome to the art gallery </h1>
-      <p>We help you live carbon neutral</p>
-      <button>Calculate Impact</button>
-    </section>
-
-    <section class="features">
-      <div class="feature-card">
-        <h3>Understand Emission</h3>
-        <p>Use our calculation powered by data from world bank to estimate your emission</p>
-        <a href="#">Discover More
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm4.28 10.28a.75.75 0 0 0 0-1.06l-3-3a.75.75 0 1 0-1.06 1.06l1.72 1.72H8.25a.75.75 0 0 0 0 1.5h5.69l-1.72 1.72a.75.75 0 1 0 1.06 1.06l3-3Z" clip-rule="evenodd" />
-          </svg>
-        </a>
+  <!-- Section 3: Services -->
+  <!-- Service 1: Art Generator -->
+  <section class="service">
+    <div class="service-content">
+      <div class="service-text">
+        <h2>Art Generator</h2>
+        <p>
+          Unleash your creative potential with our advanced art generator. Turn your ideas into stunning visual masterpieces.
+        </p>
       </div>
-
-      <div class="feature-card">
-        <h3>Support Climate Projects</h3>
-        <p>Sign up and and fund high impact carbon offsetting & plastic recycling initiatives.</p>
-        <a href="#">Discover More
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm4.28 10.28a.75.75 0 0 0 0-1.06l-3-3a.75.75 0 1 0-1.06 1.06l1.72 1.72H8.25a.75.75 0 0 0 0 1.5h5.69l-1.72 1.72a.75.75 0 1 0 1.06 1.06l3-3Z" clip-rule="evenodd" />
-          </svg>
-        </a>
+      <div class="service-image">
+        <!-- Replace art-generator.jpg with your actual service image -->
+        <img src="static\Images\ArtVisualization.webp" alt="Art Generator" style="transform: scale(0.7)" />
       </div>
-    </section>
+    </div>
+  </section>
 
-    <footer>
-      © 2024 Save Earth. All rights reserved.
-    </footer>
-  </div>
+  <!-- Service 2: Data Visualization -->
+  <section class="service">
+    <div class="service-content">
+      <div class="service-text">
+        <h2>Data Visualization</h2>
+        <p>
+          Transform complex data into engaging visuals. Our data visualization tools help you reveal insights with clarity and style.
+        </p>
+      </div>
+      <div class="service-image">
+        <!-- Replace data-visualization.jpg with your actual service image -->
+        <img src="static\Images\DataVisualization.webp" alt="Data Visualization" style="transform: scale(0.7)"/>
+      </div>
+    </div>
+  </section>
 
+  <!-- Service 3: Image Editor -->
+  <section class="service">
+    <div class="service-content">
+      <div class="service-text">
+        <h2>Image Editor</h2>
+        <p>
+          Edit and enhance your images effortlessly with our intuitive image editor. Bring your photos to life with a range of powerful tools.
+        </p>
+      </div>
+      <div class="service-image">
+        <!-- Replace image-editor.jpg with your actual service image -->
+        <img src="static\Images\imageArtphoto.webp" alt="Image Editor" style="transform: scale(0.7)"/>
+      </div>
+    </div>
+  </section>
+
+  <!-- Service 4: Audio Editor -->
+  <section class="service">
+    <div class="service-content">
+      <div class="service-text">
+        <h2>Audio Editor</h2>
+        <p>
+          Refine and mix your audio tracks with our professional audio editor. Perfect your sound with precision and ease.
+        </p>
+      </div>
+      <div class="service-image">
+        <!-- Replace audio-editor.jpg with your actual service image -->
+        <img src="static\Images\audioArtphoto.webp" alt="Audio Editor" style="transform: scale(0.7)" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Call to Action -->
+  <section id="cta">
+    <div class="container">
+      <h2>Take Action</h2>
+      <p>
+        Subscribe with your email to get updates on our latest services and creative tools.
+      </p>
+      <form action="#" method="post" class="cta-form">
+        <input type="email" name="email" placeholder="Your email address" required />
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </section>
 </body>
 </html>
-
-
 {% endblock %}

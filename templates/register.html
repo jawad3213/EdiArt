@@ -1,41 +1,137 @@
-{% extends 'useful.html' %}
+{% extends 'useful1.html' %}
 {% block title %}
-Register Page
+Contact Us
 {% endblock %}
-
 {% block content %}
-<body class="text-center">
-    <div class="container">
-        <form method="POST" class="form-register" style="color:rgb(0, 0, 0)">
-            <img class="mb-4" src="https://upload.wikimedia.org/wikipedia/commons/8/86/Logo_EdiyArt_Propiedad_de_Arturo_y_Edith.png" alt="Description">
+<!DOCTYPE html>
+<html lang="en">
+
+  <style>
+    
+    /* Basic Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body styling with new background */
+    .body {
+      font-family: Arial, sans-serif;
+      background-color: #16213e; /* New dark blue background */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    /* Container for the contact form */
+    .contact-container {
+      background: #f1edf4;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .contact-container h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #16213e; /* Matching title color to the page background */
+    }
+
+    /* Form styles */
+    .contact-container form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .contact-container form label {
+      margin-bottom: 0.5rem;
+      color: #555;
+      font-size: 1rem;
+    }
+
+    .contact-container form input,
+    .contact-container form textarea {
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid  #8e2de2;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      
+    }
 
 
-            <h1 class="h3 mb-3 font-weight-normal">
-                Please Create your Account
-            </h1>
-            <br>
-            {{ form.username.label() }}
-            {{ form.username(class="form-control", placeholder="UserName") }}
-            
-            {{ form.email_address.label() }}
-            {{ form.email_address(class="form-control", placeholder="Email Address") }}
-
-            {{ form.password1.label() }}
-            {{ form.password1(class="form-control", placeholder="Password") }}
-
-            {{ form.password2.label() }}
-            {{ form.password2(class="form-control", placeholder="Confirm Password") }}
-            <br>
-
-            {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+    .contact-container form input:hover,
+    .contact-container form textarea:hover {
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 3px solid  #8e2de2;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-family: inherit;
+      
+    }
 
 
-            
 
 
-        
+    .contact-container form textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
 
-        </form>
-    </div>
+    /* Submit Button with new gradient */
+    
+    
+
+
+
+
+    .contact-container form button {
+      display: inline-block;
+      padding: 14px 25px;
+      background: linear-gradient(45deg, #8e2de2, #4a00e0);
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.5s ease, transform 0.3s ease;
+      text-align: center;
+      margin-left: 15px;
+  }
+  .contact-container form button:hover {
+      background: linear-gradient(45deg, #ff9900, #8000ff);
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<div class="body">
+<body>
+  <div class="contact-container">
+    <h2>Contact Us</h2>
+    <!-- Adjust the form action attribute as needed -->
+    <form action="/contact" method="POST">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" placeholder="Your Name" required>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" placeholder="Your Email" required>
+
+      <label for="message">Message:</label>
+      <textarea id="message" name="message" placeholder="Your Message" required></textarea>
+
+      <button type="submit">Send Message</button>
+    </form>
+  </div>
 </body>
+</div>
+</html>
+
+
 {% endblock %}

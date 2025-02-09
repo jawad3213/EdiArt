@@ -13,31 +13,20 @@ from PIL import Image, ImageFilter, ImageOps
 import os
 from werkzeug.utils import secure_filename
 import plotly.graph_objects as go
-
 # Configure Matplotlib for non-interactive environments
 matplotlib.use('Agg')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'jawad'
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
-app.config['AUDIO_FOLDER'] = os.path.join('static', 'audio')
+app.config['MODIFIED_FOLDER'] = os.path.join('static', 'audio')
 # Ensure the upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
-if not os.path.exists(app.config['AUDIO_FOLDER']):
-    os.makedirs(app.config['AUDIO_FOLDER'])
+if not os.path.exists(app.config['MODIFIED_FOLDER']):
+    os.makedirs(app.config['MODIFIED_FOLDER'])
 
-
-
-
-
-
-
-
-
-
-
-
+# Route et fonction pour générer des formes aléatoires
 def generate_random_shapes(n=30):
     shapes = []
     for _ in range(n):
@@ -78,32 +67,20 @@ def generate_random_shapes(n=30):
         shapes.append(shape)
 
     return shapes
-
-# Route pour générer des formes aléatoires
 @app.route("/generate_shapes")
 def generate_shapes_route():
     shapes = generate_random_shapes()
     return jsonify(shapes)
 
-# Helper function to generate random shapes
-
-
-# Routes
-@app.route('/')
-@app.route('/home')
-def homepage():
-    return render_template('home.html')
-
-@app.route('/Art')
-def Artpage():
-    return render_template('Art.html')
 
 
 
-@app.route('/register')
-def registerpage():
-    form = RegisterForm()
-    return render_template('register.html', form=form)
+
+
+
+
+
+
 
 
 
@@ -147,40 +124,6 @@ def Datapage():
     # Rendre la page avec le graphique
     return render_template('Data.html', plot=fig_html)
 
-@app.route('/Data v2')
-def Datapage1():
-    n_points = 300
-    t = np.linspace(0, 4 * np.pi, n_points)
-    radius = np.linspace(0.5, 2.5, n_points) + np.random.rand(n_points) * 0.3
-    x, y, z = radius * np.cos(t), radius * np.sin(t), t
-    color_values = radius * z
-
-    fig = plt.figure(figsize=(8, 6))
-    ax = fig.add_subplot(111, projection='3d')
-    scatter = ax.scatter(x, y, z, c=color_values, cmap='magma', alpha=0.8, s=15)
-
-    ax.set_facecolor("black")
-    fig.patch.set_facecolor('black')
-    ax.grid(False)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.set_zticks([])
-    plt.title("3D Spiral Art", color='white', fontsize=16, pad=20)
-
-    cbar = plt.colorbar(scatter, shrink=0.65, pad=0.1)
-    cbar.set_label('Abstract Color Scale', color='white')
-    cbar.outline.set_edgecolor('white')
-    plt.setp(cbar.ax.yaxis.get_ticklabels(), color='white')
-
-    ax.view_init(elev=20, azim=120)
-
-    buf = io.BytesIO()
-    plt.tight_layout()
-    plt.savefig(buf, format='png', facecolor=fig.get_facecolor())
-    plt.close(fig)
-    plot_data = base64.b64encode(buf.getvalue()).decode('utf-8')
-
-    return render_template("Data1.html", plot_data=plot_data)
 # audiooooooooooooooooooooooooo
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 import os
@@ -193,7 +136,7 @@ from pydub import AudioSegment
 from pydub import AudioSegment
 from pydub.utils import which
 UPLOAD_FOLDER = 'static/uploads'
-MODIFIED_FOLDER = 'static/modified'
+MODIFIED_FOLDER = 'static/audio'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MODIFIED_FOLDER'] = MODIFIED_FOLDER
 
@@ -279,7 +222,7 @@ def index():
                 audio.export(modified_filepath, format="mp3")
 
                 # Afficher l'audio modifié
-                return render_template('Audio.html', audio_url_original=f'uploads/{filename}', audio_url_modified=f'modified/{modified_filename}')
+                return render_template('Audio.html', audio_url_original=f'uploads/{filename}', audio_url_modified=f'audio/{modified_filename}')
 
         except Exception as e:
             print(f"Error: {str(e)}")
@@ -299,14 +242,31 @@ def modified_file(filename):
 
 
 
+# Les autres routes
+@app.route('/')
+@app.route('/home')
+def homepage():
+    return render_template('home.html')
+
+@app.route('/Art')
+def Artpage():
+    return render_template('Art.html')
 
 
 @app.route('/Audio')
 def Audiopage():
     return render_template('Audio.html')
 
+@app.route('/Log In')
+def Loginpage():
+    return render_template('LogIn.html')
 
+@app.route('/register')
+def registerpage():
+    form = RegisterForm()
+    return render_template('register.html', form=form)
 
+#Imaaaaaageeee
 @app.route('/Image')
 def Imagepage():
     return render_template('Image.html')
@@ -354,6 +314,4 @@ def download_file(filename):
     return send_file(file_path, as_attachment=True)
 
 if __name__ == '__main__':
-     
-   
-      app.run(debug=True)
+    app.run(debug=True)
