@@ -45,10 +45,11 @@ A multi-functional gallery web application built with Flask. This project showca
     pip install Pygame matplotlib seaborn Pandas PIL pyDub flask pillow plotly
 
    **Directory Structure:**
-     The application expects the following directory structure for storing files:
+     1. The application expects the following directory structure for storing files:
         **static/uploads** — For storing uploaded files (images and audio).
         **static/modified** — For storing modified audio files.
-     The application code will automatically create these folders if they do not exist. However, ensure your environment allows the application to create directories in the project path.
+     2. The application code will automatically create these folders if they do not exist. However, ensure your environment allows the application to create 
+        directories in the project path.
    **Configuration:**
      The Flask application's secret key is set within the code (app.config['SECRET_KEY'] = 'jawad').
      Audio and image upload paths are configured under app.config['UPLOAD_FOLDER'] and app.config['MODIFIED_FOLDER'].
