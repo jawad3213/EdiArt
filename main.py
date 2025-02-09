@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, jsonify
 from forms import RegisterForm
 import random
@@ -11,6 +12,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from flask import Flask, request, render_template, send_file, redirect, url_for
 from PIL import Image, ImageFilter, ImageOps
 import os
+import plotly.graph_objects as go
 from werkzeug.utils import secure_filename
 
 # Configure Matplotlib for non-interactive environments
@@ -214,71 +216,52 @@ def registerpage():
     return render_template('register.html', form=form)
 
 #Daaaaaattttttttttttaaaaaaaaaaaa
-@app.route('/Data v1')
+
+
+  
+@app.route('/Data_v1')
 def Datapage():
-    n_points = 100
-    df = pd.DataFrame({"Value": np.random.randint(10, 100, size=n_points)})
-    theta = np.linspace(0, 4 * np.pi, n_points)
-    r = df["Value"].values + np.random.uniform(0, 5, size=n_points)
+    # Charger les données
+    data = pd.read_csv("large_art_ecommerce_dataset.csv")
 
-    plt.figure(figsize=(8, 8))
-    ax = plt.subplot(111, projection='polar')
-    scatter = ax.scatter(theta, r, c=r, cmap='magma', alpha=0.7, s=r*2, edgecolor='white')
-    
-    ax.set_facecolor("#111111")
-    ax.grid(False)
-    ax.spines['polar'].set_visible(False)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    plt.title("Abstract Polar Swirl", color='white', fontsize=16, pad=20)
+    # Créer une grille pour la surface
+    size_values = data['Size'].unique()
+    style_values = data['Style'].unique()
 
-    cbar = plt.colorbar(scatter, pad=0.1)
-    cbar.set_label("Data Value", color='white')
-    cbar.outline.set_edgecolor('white')
-    plt.setp(cbar.ax.yaxis.get_ticklabels(), color='white')
+    # Créer des matrices pour la taille et le prix
+    Z = []
+    for style in style_values:
+        row = []
+        for size in size_values:
+            # Moyenne des prix pour une combinaison donnée
+            avg_price = data[(data['Size'] == size) & (data['Style'] == style)]['Price ($)'].mean()
+            row.append(avg_price)
+        Z.append(row)
 
-    buf = io.BytesIO()
-    plt.tight_layout()
-    plt.savefig(buf, format='png', facecolor='#111111')
-    plt.close()
-    plot_data = base64.b64encode(buf.getvalue()).decode("utf-8")
+    # Créer une figure avec Plotly
+    fig = go.Figure(data=[go.Surface(z=Z, x=size_values, y=style_values, colorscale='Viridis')])
 
-    return render_template("Data.html", plot_data=plot_data)
+    # Ajouter des titres et labels
+    fig.update_layout(
+        scene=dict(
+            xaxis_title='Size',
+            yaxis_title='Style',
+            zaxis_title='Price ($)',
+        ),
+        title="3D Heatmap of Art Market Dataset - Price vs. Size & Style",
+        template='plotly_dark'
+    )
 
-@app.route('/Data v2')
-def Datapage1():
-    n_points = 300
-    t = np.linspace(0, 4 * np.pi, n_points)
-    radius = np.linspace(0.5, 2.5, n_points) + np.random.rand(n_points) * 0.3
-    x, y, z = radius * np.cos(t), radius * np.sin(t), t
-    color_values = radius * z
+    # Exporter la figure en fichier HTML
+    fig_html = fig.to_html(full_html=False)
 
-    fig = plt.figure(figsize=(8, 6))
-    ax = fig.add_subplot(111, projection='3d')
-    scatter = ax.scatter(x, y, z, c=color_values, cmap='magma', alpha=0.8, s=15)
+    # Rendre la page avec le graphique
+    return render_template('Data.html', plot=fig_html)
 
-    ax.set_facecolor("black")
-    fig.patch.set_facecolor('black')
-    ax.grid(False)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.set_zticks([])
-    plt.title("3D Spiral Art", color='white', fontsize=16, pad=20)
 
-    cbar = plt.colorbar(scatter, shrink=0.65, pad=0.1)
-    cbar.set_label('Abstract Color Scale', color='white')
-    cbar.outline.set_edgecolor('white')
-    plt.setp(cbar.ax.yaxis.get_ticklabels(), color='white')
 
-    ax.view_init(elev=20, azim=120)
 
-    buf = io.BytesIO()
-    plt.tight_layout()
-    plt.savefig(buf, format='png', facecolor=fig.get_facecolor())
-    plt.close(fig)
-    plot_data = base64.b64encode(buf.getvalue()).decode('utf-8')
 
-    return render_template("Data1.html", plot_data=plot_data)
 
 #Imaaaaaageeee
 @app.route('/Image')
@@ -329,3 +312,16 @@ def download_file(filename):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+
+
+
+
+
+
+
+
+
+ 

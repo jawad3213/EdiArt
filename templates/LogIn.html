@@ -408,13 +408,13 @@ a:active {
         <h2 class="title">Sign In</h2>
         <div class="input-field">
           <i class="fas fa-user"></i>
-          <input type="text" placeholder="Username" />
+          <input type="text" class="in" placeholder="Username" />
         </div>
         <div class="input-field">
           <i class="fas fa-lock"></i>
-          <input type="password" placeholder="Password" />
+          <input class="pass" type="password" placeholder="Password" />
         </div>
-        <input type="submit" value="Login" class="btn solid" />
+        <input type="submit" value="Login" class="btn solid sub" />
         <p class="social-text">Or Sign in with social platforms</p>
         <div class="social-media">
           <a href="#" class="social-icon">
@@ -491,6 +491,9 @@ a:active {
 <!-- JavaScript for dynamic toggling between forms -->
 <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
 <script>
+
+
+
   const sign_in_btn = document.querySelector("#sign-in-btn");
   const sign_up_btn = document.querySelector("#sign-up-btn");
   const container = document.querySelector(".container");
@@ -501,7 +504,36 @@ a:active {
 
   sign_in_btn.addEventListener("click", () => {
       container.classList.remove("sign-up-mode");
+
   });
+  document.addEventListener("DOMContentLoaded", () => {
+
+   if(localStorage.getItem("cle")==="true"){
+    document.querySelector('.login').style.display='none';
+    document.querySelector('.out').style.display='block';
+   }
+
+   document.querySelector('.sign-in-form').addEventListener('submit' ,(e)=>{
+   e.preventDefault();
+   const email=document.querySelector('.in').value;
+const pass=document.querySelector('.pass').value;
+    
+    if(email==='admin@gmail.com' && pass==='admin'){
+      alert('conexion');
+      localStorage.setItem("cle","true");
+        window.location.href ="{{ url_for('homepage') }}";
+    }
+})
+document.querySelector('.out').addEventListener('click', () => {
+    localStorage.removeItem("cle");
+    document.querySelector('.login').style.display = 'block';
+    document.querySelector('.out').style.display = 'none';
+    alert("Déconnexion réussie !");
+    window.location.reload();
+});
+  })
+
+
 </script>
   
 {% endblock %}

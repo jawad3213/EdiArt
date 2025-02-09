@@ -137,5 +137,5 @@ def generate_random_fractals(n=10):
 
 
 # Test - Affichage JSON des formes générées
-if _name_ == "_main_":
+if __name__== "_main_":
     print(json.dumps(generate_random_fractals(), indent=4))

@@ -109,11 +109,13 @@
     /* Apply the same gradient text effect on hover for auth links */
     .navbar .auth a:hover {
       background: linear-gradient(45deg, #ff9900, #8000ff);
-      -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
       border-color: transparent;
     }
-
+     .out{
+        display: none;
+      }
     /* Responsive adjustments for mobile devices */
     @media (max-width: 768px) {
       .navbar {
@@ -131,6 +133,7 @@
         align-self: stretch;
         justify-content: center;
       }
+     
     }
   </style>
 </head>
@@ -154,7 +157,8 @@
     </div>
     <!-- Authentication Links -->
     <div class="auth">
-      <a href="{{ url_for('Loginpage') }}">Log In</a>
+      <a href="{{ url_for('Loginpage') }}" class="login">Log In</a>
+      <a href="{{ url_for('Loginpage') }}" class="out">Log out -> </a>
       <a href="{{ url_for('registerpage') }}">Contact Us</a>
     </div>
   </nav>
@@ -162,12 +166,15 @@
   {% block content %}
   {% endblock %}
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
-    crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" 
+          integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" 
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" 
+          integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" 
+          crossorigin="anonymous"></script>
+          <script>
+            
+          </script>
 </body>
 
 </html>
