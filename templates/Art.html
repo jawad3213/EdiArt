@@ -18,7 +18,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="addShapeModalLabel">Add New Shape</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close btnc" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div class="mb-3">
@@ -27,8 +27,6 @@
             <option value="circle">Circle</option>
             <option value="square">Square</option>
             <option value="triangle">Triangle</option>
-              <option value="mandelbrot">Mandelbrot</option>
-            <option value="julia">Julia</option>
           </select>
         </div>
         <div class="mb-3">
@@ -47,22 +45,10 @@
               <label for="shapePositionY" class="form-label">Y Position</label>
               <input type="number" class="form-control" id="shapePositionY" value="0">
           </div>
-           <!-- Fractal specific options  -->
-          <div class="mb-3 fractal-options" style="display:none">
-            <label for="maxIterations" class="form-label">Max Iterations</label>
-            <input type="number" class="form-control" id="maxIterations" value="100">
-          </div>
-          <div class="mb-3 julia-options" style="display:none">
-            <label for="juliaCReal" class="form-label">Julia C Real</label>
-            <input type="number" class="form-control" id="juliaCReal" value="-0.4">
-          </div>
-          <div class="mb-3 julia-options" style="display:none">
-            <label for="juliaCImag" class="form-label">Julia C Imaginary</label>
-            <input type="number" class="form-control" id="juliaCImag" value="0.6">
-          </div>
+
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary " data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-secondary btnc" data-bs-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary " id="confirmAddShape">Add Shape</button>
       </div>
     </div>
@@ -75,7 +61,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="modifyShapeModalLabel">Modify Shape</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close btnc" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
            <div class="mb-3">
@@ -84,8 +70,6 @@
                 <option value="circle">Circle</option>
               <option value="square">Square</option>
               <option value="triangle">Triangle</option>
-                 <option value="mandelbrot">Mandelbrot</option>
-            <option value="julia">Julia</option>
             </select>
           </div>
           <div class="mb-3">
@@ -104,22 +88,9 @@
               <label for="modifyShapePositionY" class="form-label">Y Position</label>
               <input type="number" class="form-control" id="modifyShapePositionY" value="0">
           </div>
-             <!-- Fractal specific options  -->
-            <div class="mb-3 fractal-options" style="display:none">
-              <label for="modifyMaxIterations" class="form-label">Max Iterations</label>
-              <input type="number" class="form-control" id="modifyMaxIterations" value="100">
-            </div>
-            <div class="mb-3 julia-options" style="display:none">
-              <label for="modifyJuliaCReal" class="form-label">Julia C Real</label>
-              <input type="number" class="form-control" id="modifyJuliaCReal" value="-0.4">
-            </div>
-            <div class="mb-3 julia-options" style="display:none">
-              <label for="modifyJuliaCImag" class="form-label">Julia C Imaginary</label>
-              <input type="number" class="form-control" id="modifyJuliaCImag" value="0.6">
-            </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary btnc" data-bs-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-primary" id="confirmModifyShape">Modify Shape</button>
         </div>
       </div>
@@ -172,7 +143,7 @@
   }
 </style>
 <script>
-  const SHAPE_TYPES = ["circle", "square", "triangle", "mandelbrot", "julia"];
+  const SHAPE_TYPES = ["circle", "square", "triangle"];
   let selectedShape = null;
   let isDragging = false;
   let dragOffsetX = 0;
@@ -184,7 +155,8 @@
 
  async function fetchShapes() {
         const response = await fetch('/generate_shapes');
-        return await response.json();
+        const shapes = await response.json();
+        return shapes.filter(shape => SHAPE_TYPES.includes(shape.type)); // Filter out Mandelbrot and Julia
     }
   function drawShapes(canvas, shapes) {
       const ctx = canvas.getContext('2d');
@@ -215,21 +187,6 @@
               ctx.fill();
               if (selectedShape === shape && currentlySelectedCanvas === canvas) {
                   ctx.stroke();
-              }
-          }
-          else if (shape.type === "mandelbrot") {
-              // Mock Mandelbrot rendering
-              ctx.fillRect(shape.x, shape.y, shape.size, shape.size);
-              if (selectedShape === shape && currentlySelectedCanvas === canvas) {
-                  ctx.strokeRect(shape.x, shape.y, shape.size, shape.size);
-              }
-          } else if (shape.type === "julia") {
-              // Mock Julia rendering
-              ctx.beginPath();
-              ctx.arc(shape.x, shape.y, shape.size / 2, 0, Math.PI * 2);
-              ctx.fill();
-              if (selectedShape === shape && currentlySelectedCanvas === canvas) {
-                  ctx.stroke()
               }
           }
       });
@@ -274,11 +231,6 @@
                   return shape;
               }
           }
-        else if (shape.type === "mandelbrot" || shape.type === "julia") { // Corrected: check both fractal types
-          if (x >= shape.x && x <= shape.x + shape.size && y >= shape.y && y <= shape.y + shape.size) {
-              return shape;
-          }
-      }
       }
       return null;
   }
@@ -290,7 +242,7 @@
           let shapes = [];
         if (i < 3) {
             // For the first 3 canvases, generate random shapes/fractals
-              shapes = await fetchShapes();
+            shapes = await fetchShapes();
         }
            canvas.dataset.shapes = JSON.stringify(shapes);
           canvas.width = 480;
@@ -312,32 +264,28 @@
           currentlySelectedCanvas = canvas;
           document.getElementById("modifyShapeType").value = selectedShape.type
           document.getElementById("modifyShapeSize").value = selectedShape.size
-           document.getElementById("modifyShapeColor").value = selectedShape.color;
-           document.getElementById("modifyShapePositionX").value = selectedShape.x;
-           document.getElementById("modifyShapePositionY").value = selectedShape.y;
-            // Show/hide fractal-specific options
-          const isFractal = ["mandelbrot", "julia"].includes(selectedShape.type);
-          document.querySelectorAll(".fractal-options").forEach(el => el.style.display = isFractal ? "block" : "none");
-          document.querySelectorAll(".julia-options").forEach(el => el.style.display = selectedShape.type === "julia" ? "block" : "none");
-          if (selectedShape.type === "mandelbrot" || selectedShape.type === "julia") {
-                document.getElementById("modifyMaxIterations").value = selectedShape.max_iter;
+          document.getElementById("modifyShapeColor").value = selectedShape.color; //set correct color
+          document.getElementById("modifyShapePositionX").value = selectedShape.x;
+          document.getElementById("modifyShapePositionY").value = selectedShape.y;
 
-              if(selectedShape.type === "julia"){
-               document.getElementById("modifyJuliaCReal").value = selectedShape.c_real;
-               document.getElementById("modifyJuliaCImag").value = selectedShape.c_imag;
-              }
+          //Show Modal
+          const modifyShapeModalElement = document.getElementById('modifyShapeModal');
+          if(modifyShapeModalElement){
+               modifyShapeModalElement.classList.add('show');
+               modifyShapeModalElement.style.display = 'block';
+               modifyShapeModalElement.setAttribute('aria-modal', 'true');
+               modifyShapeModalElement.setAttribute('role', 'dialog');
           }
-          const modifyShapeModal = new bootstrap.Modal(document.getElementById('modifyShapeModal'));
-          modifyShapeModal.show()
       } else if (addShapeActive) {
-          const addShapeModal = new bootstrap.Modal(document.getElementById('addShapeModal'));
-           const selectedShapeType =  document.getElementById("shapeType").value
-            const isFractal = ["mandelbrot", "julia"].includes(selectedShapeType);
-              document.querySelectorAll(".fractal-options").forEach(el => el.style.display = isFractal ? "block" : "none");
-               document.querySelectorAll(".julia-options").forEach(el => el.style.display = selectedShapeType === "julia" ? "block" : "none");
+         const addShapeModalElement = document.getElementById('addShapeModal');
+          if(addShapeModalElement){
+               addShapeModalElement.classList.add('show');
+               addShapeModalElement.style.display = 'block';
+               addShapeModalElement.setAttribute('aria-modal', 'true');
+               addShapeModalElement.setAttribute('role', 'dialog');
+          }
           document.getElementById("shapePositionX").value = lastCanvasClickX;
           document.getElementById("shapePositionY").value = lastCanvasClickY;
-          addShapeModal.show()
       }
   }
 
@@ -380,7 +328,7 @@
       const addShapeBtn = document.getElementById('addShape');
       const modifyShapeBtn = document.getElementById('modifyShape');
       const saveCanvasBtn = document.getElementById("saveCanvas");
-
+    const modifyShapeColorInput = document.getElementById('modifyShapeColor');
 
       //Add Shape Modal
    document.getElementById('confirmAddShape').addEventListener('click', () => {
@@ -388,21 +336,7 @@
     const shapes = JSON.parse(canvas.dataset.shapes || '[]');
      let newShape = {};
     const shapeType = document.getElementById('shapeType').value;
-      if (["mandelbrot", "julia"].includes(shapeType)) {
-            newShape = {
-                type: shapeType,
-                x: parseInt(document.getElementById('shapePositionX').value),
-                y: parseInt(document.getElementById('shapePositionY').value),
-                size: parseInt(document.getElementById('shapeSize').value),
-                color: document.getElementById('shapeColor').value,
-                max_iter: parseInt(document.getElementById('maxIterations').value),
-            };
 
-            if (shapeType === "julia") {
-                newShape.c_real = parseFloat(document.getElementById('juliaCReal').value);
-                newShape.c_imag = parseFloat(document.getElementById('juliaCImag').value);
-            }
-        } else {
              newShape = {
                 type: shapeType,
                 x: parseInt(document.getElementById('shapePositionX').value),
@@ -410,30 +344,32 @@
                 size: parseInt(document.getElementById('shapeSize').value),
                 color: document.getElementById('shapeColor').value,
             }
-        }
+
     shapes.push(newShape);
     canvas.dataset.shapes = JSON.stringify(shapes);
     updateCanvas(canvas);
 
-    // Fermer la modale proprement
+    // Fermer la modale
     const modalElement = document.getElementById('addShapeModal');
     if (modalElement) {
-        const addShapeModal = new bootstrap.Modal(modalElement);
-        addShapeModal.hide(); // Masque la modale
-    } else {
-        console.error("L'élément modal n'a pas été trouvé.");
+        modalElement.classList.remove('show');
+        modalElement.style.display = 'none';
+        modalElement.removeAttribute('aria-modal');
+        modalElement.removeAttribute('role');
     }
 
     // Réinitialiser les variables d'état
     addShapeBtn.classList.remove("active");
     addShapeActive = false;
        });
-  document.getElementById('shapeType').addEventListener('change', (event) => {
-    const shapeType = event.target.value;
-    const isFractal = ["mandelbrot", "julia"].includes(shapeType);
-    document.querySelectorAll(".fractal-options").forEach(el => el.style.display = isFractal ? "block" : "none");
-     document.querySelectorAll(".julia-options").forEach(el => el.style.display = shapeType === "julia" ? "block" : "none");
-});
+
+
+        modifyShapeColorInput.addEventListener('input', () => {
+        if (selectedShape && currentlySelectedCanvas) {
+            selectedShape.color = modifyShapeColorInput.value;
+            updateCanvas(currentlySelectedCanvas);
+        }
+        });
 
 
       //Modify Shape Modal
@@ -441,30 +377,21 @@
           const canvas = currentlySelectedCanvas;
           selectedShape.type = document.getElementById("modifyShapeType").value;
           selectedShape.size = parseInt(document.getElementById("modifyShapeSize").value);
-          selectedShape.color = document.getElementById("modifyShapeColor").value;
           selectedShape.x = parseInt(document.getElementById("modifyShapePositionX").value);
           selectedShape.y = parseInt(document.getElementById("modifyShapePositionY").value);
 
-           if (["mandelbrot", "julia"].includes(selectedShape.type)) {
-            selectedShape.max_iter = parseInt(document.getElementById("modifyMaxIterations").value);
-             if (selectedShape.type === "julia") {
-                selectedShape.c_real = parseFloat(document.getElementById('modifyJuliaCReal').value);
-                selectedShape.c_imag = parseFloat(document.getElementById('modifyJuliaCImag').value);
-            }
+        updateCanvas(canvas)
+
+       // Fermer la modale
+        const modalElement = document.getElementById('modifyShapeModal');
+        if (modalElement) {
+            modalElement.classList.remove('show');
+            modalElement.style.display = 'none';
+            modalElement.removeAttribute('aria-modal');
+            modalElement.removeAttribute('role');
         }
 
-          updateCanvas(canvas)
 
-        // Fermer la modale proprement
-        const modifyShapeModal = document.getElementById('modifyShapeModal');
-            const modal = bootstrap.Modal.getInstance(modifyShapeModal);
-           modal.hide();
-      });
-      document.getElementById('modifyShapeType').addEventListener('change', (event) => {
-          const shapeType = event.target.value;
-          const isFractal = ["mandelbrot", "julia"].includes(shapeType);
-            document.querySelectorAll(".fractal-options").forEach(el => el.style.display = isFractal ? "block" : "none");
-            document.querySelectorAll(".julia-options").forEach(el => el.style.display = shapeType === "julia" ? "block" : "none");
       });
 
       addCanvasBtn.addEventListener("click", () => {
@@ -513,25 +440,32 @@
               link.click();
           });
       });
+
+     //cancel button event listener
+      document.querySelectorAll('.btnc').forEach(buttonCancel => {
+          buttonCancel.addEventListener("click", (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+
+              const modalElement = buttonCancel.closest('.modal');
+              if (modalElement) {
+                  modalElement.classList.remove('show');
+                  modalElement.style.display = 'none';
+                  modalElement.removeAttribute('aria-modal');
+                  modalElement.removeAttribute('role');
+
+                  const addShapeBtn = document.getElementById('addShape');
+                  if (addShapeBtn && addShapeActive) {
+                      addShapeBtn.classList.remove("active");
+                      addShapeActive = false;
+                  }
+              } else {
+                  console.error("Modal element not found.");
+              }
+          });
+      });
   });
 
-    //cancel button event listener
-   const buttoncancel = document.querySelector('.btn-secondary[data-bs-dismiss="modal"]');
-   buttoncancel.addEventListener("click", () => {
-       //Get the modal element
-       const addShapeModal = document.getElementById('addShapeModal');
-       if (addShapeModal) {
-          //Use Bootstrap to close the modal
-           const bootstrapModal = bootstrap.Modal.getInstance(addShapeModal);
-           bootstrapModal.hide(); //Close the modal correctly
-          //Reset the button state
-           addShapeBtn.classList.remove("active");
-           addShapeActive = false;
-       } else {
-           console.error("The modal was not found.");
-       }
-   });
-   //cancel button end
 window.onload = initializeCanvases;
 </script>
 {% endblock %}

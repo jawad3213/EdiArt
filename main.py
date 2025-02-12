@@ -17,16 +17,17 @@ from werkzeug.utils import secure_filename
 
 # Configure Matplotlib for non-interactive environments
 matplotlib.use('Agg')
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'jawad'
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
 # Ensure the upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
+    os.makedirs(app.config['UPLOAD_FOLDER']);
+
+
 
 # Route et fonction pour générer des formes aléatoires
-def generate_random_shapes(n=30):
+def generate_random_shapes(n=40):
     shapes = []
     for _ in range(n):
         shape_type = random.choice(["circle", "square", "triangle", "mandelbrot", "julia"])
@@ -74,18 +75,18 @@ def generate_shapes_route():
 
 #Auuuddiiooooo
 # audiooooooooooooooooooooooooo
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, url_for, send_from_directory
 import os
 from pydub import AudioSegment
 import os
-from flask import Flask, request, render_template, url_for, redirect
+from flask import Flask, request, render_template, url_for
 from werkzeug.utils import secure_filename
 from pydub import AudioSegment
 
 from pydub import AudioSegment
 from pydub.utils import which
 UPLOAD_FOLDER = 'static/uploads'
-MODIFIED_FOLDER = 'static/modified'
+MODIFIED_FOLDER = 'static/audio'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MODIFIED_FOLDER'] = MODIFIED_FOLDER
 
@@ -171,7 +172,7 @@ def index():
                 audio.export(modified_filepath, format="mp3")
 
                 # Afficher l'audio modifié
-                return render_template('Audio.html', audio_url_original=f'uploads/{filename}', audio_url_modified=f'modified/{modified_filename}')
+                return render_template('Audio.html', audio_url_original=f'uploads/{filename}', audio_url_modified=f'audio/{modified_filename}')
 
         except Exception as e:
             print(f"Error: {str(e)}")

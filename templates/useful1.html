@@ -31,6 +31,7 @@
       align-items: center;
       background: linear-gradient(30deg, #3b1363, #445588);
       padding: 10px 20px;
+      
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
@@ -173,7 +174,25 @@
           integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" 
           crossorigin="anonymous"></script>
           <script>
-            
+
+
+
+
+
+
+if(localStorage.getItem("cle")==="true"){
+    document.querySelector('.login').style.display='none';
+    document.querySelector('.out').style.display='block';
+   }
+
+            document.querySelector('.out').addEventListener('click', () => {
+    localStorage.removeItem("cle");
+    document.querySelector('.login').style.display = 'block';
+    document.querySelector('.out').style.display = 'none';
+    alert("Déconnexion réussie !");
+    window.location.reload();
+});
+  
           </script>
 </body>
 
