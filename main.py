@@ -23,7 +23,8 @@ app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
 # Ensure the upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER']);
-
+if not os.path.exists(app.config['MODIFIED_FOLDER']):
+    os.makedirs(app.config['MODIFIED_FOLDER']);
 
 
 # Route et fonction pour générer des formes aléatoires
