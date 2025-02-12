@@ -23,42 +23,19 @@ app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
 # Ensure the upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER']);
-if not os.path.exists(app.config['MODIFIED_FOLDER']):
-    os.makedirs(app.config['MODIFIED_FOLDER']);
 
 
 # Route et fonction pour générer des formes aléatoires
-def generate_random_shapes(n=40):
+def generate_random_shapes(n=50):
     shapes = []
     for _ in range(n):
-        shape_type = random.choice(["circle", "square", "triangle", "mandelbrot", "julia"])
+        shape_type = random.choice(["circle", "square", "triangle"])
         x = random.randint(50, 300)
         y = random.randint(50, 300)
         size = random.randint(30, 70)
         color = [random.randint(0, 255) for _ in range(3)]
 
-        if shape_type == "mandelbrot":
-            shape = {
-                "type": "mandelbrot",
-                "x": x,
-                "y": y,
-                "size": size,
-                "color": f"rgb({color[0]}, {color[1]}, {color[2]})",
-                "max_iter": random.randint(50, 200)
-            }
-        elif shape_type == "julia":
-            shape = {
-                "type": "julia",
-                "x": x,
-                "y": y,
-                "size": size,
-                "color": f"rgb({color[0]}, {color[1]}, {color[2]})",
-                "c_real": random.uniform(-1, 1),
-                "c_imag": random.uniform(-1, 1),
-                "max_iter": random.randint(50, 200)
-            }
-        else:
-            shape = {
+        shape = {
                 "type": shape_type,
                 "x": x,
                 "y": y,
