@@ -59,7 +59,7 @@ class Triangle(Shape):
         }
 
 
-def generate_random_shapes(n=70):
+def generate_random_shapes(n=40):
     """Génère N formes aléatoires."""
     shapes = []
     for _ in range(n):

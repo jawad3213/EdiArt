@@ -50,18 +50,16 @@ def generate_shapes_route():
     shapes = generate_random_shapes()
     return jsonify(shapes)
 
-
-#Auuuddiiooooo
 # audiooooooooooooooooooooooooo
+
 from flask import Flask, render_template, request, url_for, send_from_directory
 import os
-from pydub import AudioSegment
-import os
+
+
 from flask import Flask, request, render_template, url_for
 from werkzeug.utils import secure_filename
 from pydub import AudioSegment
 
-from pydub import AudioSegment
 from pydub.utils import which
 UPLOAD_FOLDER = 'static/uploads'
 MODIFIED_FOLDER = 'static/audio'
